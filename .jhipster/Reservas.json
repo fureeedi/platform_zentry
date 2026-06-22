@@ -1,0 +1,62 @@
+{
+  "annotations": {
+    "changelogDate": "20260622215049"
+  },
+  "applications": ["zentry"],
+  "dto": "mapstruct",
+  "fields": [
+    {
+      "fieldName": "fechaSolicitud",
+      "fieldType": "LocalDate",
+      "fieldValidateRules": ["required"]
+    },
+    {
+      "fieldName": "fechaReserva",
+      "fieldType": "LocalDate",
+      "fieldValidateRules": ["required"]
+    },
+    {
+      "fieldName": "horaInicio",
+      "fieldType": "LocalTime",
+      "fieldValidateRules": ["required"]
+    },
+    {
+      "fieldName": "horafin",
+      "fieldType": "LocalTime",
+      "fieldValidateRules": ["required"]
+    },
+    {
+      "fieldName": "cuposApartados",
+      "fieldType": "Integer",
+      "fieldValidateRules": ["min"],
+      "fieldValidateRulesMin": "1"
+    },
+    {
+      "fieldName": "estado",
+      "fieldType": "Estado",
+      "fieldValidateRules": ["required"],
+      "fieldValues": "APROBADO (Aprobado),RECHAZADO (Rechazado),PENDIENTE (Pendiente)"
+    }
+  ],
+  "name": "Reservas",
+  "pagination": "pagination",
+  "relationships": [
+    {
+      "otherEntityName": "servicioConjunto",
+      "relationshipName": "servicioConjunto",
+      "relationshipSide": "left",
+      "relationshipType": "many-to-one",
+      "relationshipValidateRules": "required"
+    },
+    {
+      "otherEntityField": "numeroDocumento",
+      "otherEntityName": "vinculado",
+      "relationshipName": "vinculado",
+      "relationshipSide": "left",
+      "relationshipType": "many-to-one",
+      "relationshipValidateRules": "required"
+    }
+  ],
+  "searchEngine": "no",
+  "service": "serviceImpl"
+}

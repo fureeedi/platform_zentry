@@ -1,0 +1,20 @@
+{
+  "annotations": {
+    "changelogDate": "20260622214449"
+  },
+  "applications": ["zentry"],
+  "dto": "mapstruct",
+  "fields": [
+    {
+      "fieldName": "nombreTipoDocumento",
+      "fieldType": "String",
+      "fieldValidateRules": ["maxlength"],
+      "fieldValidateRulesMaxlength": "50"
+    }
+  ],
+  "name": "TipoDocumento",
+  "pagination": "pagination",
+  "relationships": [],
+  "searchEngine": "no",
+  "service": "serviceImpl"
+}

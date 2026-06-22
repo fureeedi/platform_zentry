@@ -1,0 +1,37 @@
+{
+  "annotations": {
+    "changelogDate": "20260622214949"
+  },
+  "applications": ["zentry"],
+  "dto": "mapstruct",
+  "fields": [
+    {
+      "fieldName": "tipoVinculo",
+      "fieldType": "TipoVinculo",
+      "fieldValidateRules": ["required"],
+      "fieldValues": "PROPIETARIO (Propietario),ARRENDATARIO (Arrendatario)"
+    }
+  ],
+  "name": "VinculadoInmueble",
+  "pagination": "pagination",
+  "relationships": [
+    {
+      "otherEntityField": "numeroDocumento",
+      "otherEntityName": "vinculado",
+      "relationshipName": "vinculado",
+      "relationshipSide": "left",
+      "relationshipType": "many-to-one",
+      "relationshipValidateRules": "required"
+    },
+    {
+      "otherEntityField": "numeroInmueble",
+      "otherEntityName": "inmueble",
+      "relationshipName": "inmueble",
+      "relationshipSide": "left",
+      "relationshipType": "many-to-one",
+      "relationshipValidateRules": "required"
+    }
+  ],
+  "searchEngine": "no",
+  "service": "serviceImpl"
+}

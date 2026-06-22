@@ -1,0 +1,45 @@
+{
+  "annotations": {
+    "changelogDate": "20260622215349"
+  },
+  "applications": ["zentry"],
+  "dto": "mapstruct",
+  "fields": [
+    {
+      "fieldName": "tipoInmueble",
+      "fieldType": "TipoInmueble",
+      "fieldValidateRules": ["required"],
+      "fieldValues": "APARTAMENTO (Apartamento),CASA (Casa)"
+    },
+    {
+      "fieldName": "torre",
+      "fieldType": "String",
+      "fieldValidateRules": ["maxlength"],
+      "fieldValidateRulesMaxlength": "10"
+    },
+    {
+      "fieldName": "numeroInmueble",
+      "fieldType": "String",
+      "fieldValidateRules": ["required", "maxlength"],
+      "fieldValidateRulesMaxlength": "10"
+    },
+    {
+      "fieldName": "piso",
+      "fieldType": "Integer"
+    }
+  ],
+  "name": "Inmueble",
+  "pagination": "pagination",
+  "relationships": [
+    {
+      "otherEntityField": "nombreConjunto",
+      "otherEntityName": "conjuntoResidencial",
+      "relationshipName": "conjuntoResidencial",
+      "relationshipSide": "left",
+      "relationshipType": "many-to-one",
+      "relationshipValidateRules": "required"
+    }
+  ],
+  "searchEngine": "no",
+  "service": "serviceImpl"
+}

@@ -1,0 +1,52 @@
+{
+  "annotations": {
+    "changelogDate": "20260622214549"
+  },
+  "applications": ["zentry"],
+  "dto": "mapstruct",
+  "fields": [
+    {
+      "fieldName": "titulo",
+      "fieldType": "String",
+      "fieldValidateRules": ["required", "maxlength"],
+      "fieldValidateRulesMaxlength": "50"
+    },
+    {
+      "fieldName": "descripcion",
+      "fieldType": "String",
+      "fieldValidateRules": ["required", "maxlength"],
+      "fieldValidateRulesMaxlength": "200"
+    },
+    {
+      "fieldName": "fecha",
+      "fieldType": "ZonedDateTime",
+      "fieldValidateRules": ["required"]
+    },
+    {
+      "fieldName": "imagen",
+      "fieldType": "ImageBlob"
+    }
+  ],
+  "name": "Anuncios",
+  "pagination": "pagination",
+  "relationships": [
+    {
+      "otherEntityField": "nombreConjunto",
+      "otherEntityName": "conjuntoResidencial",
+      "relationshipName": "conjuntoResidencial",
+      "relationshipSide": "left",
+      "relationshipType": "many-to-one",
+      "relationshipValidateRules": "required"
+    },
+    {
+      "otherEntityField": "numeroDocumento",
+      "otherEntityName": "administradorConjunto",
+      "relationshipName": "administradorConjunto",
+      "relationshipSide": "left",
+      "relationshipType": "many-to-one",
+      "relationshipValidateRules": "required"
+    }
+  ],
+  "searchEngine": "no",
+  "service": "serviceImpl"
+}

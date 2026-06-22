@@ -1,0 +1,187 @@
+application {
+	config {
+    baseName zentry
+    applicationType monolith
+    packageName com.edu.sena.zentry
+    authenticationType jwt
+    databaseType mongodb
+    devDatabaseType mongodb
+    prodDatabaseType mongodb
+    cacheProvider no
+    buildTool maven
+    clientFramework react
+    enableTranslation false
+    nativeLanguage es
+    languages [es]
+    websocket false
+    testFrameworks [cucumber]
+    //entitySuffix false
+    jhiPrefix project
+    reactive false
+    serverPort 8080
+    searchEngine false
+    clientTheme solar
+    clientThemeVariant primary
+    }
+    entities *
+}
+
+// ── ENUMS ────────────────────────────
+
+enum Estado {
+    APROBADO(Aprobado),
+    RECHAZADO(Rechazado),
+    PENDIENTE(Pendiente)
+}
+
+enum TipoVinculo {
+    PROPIETARIO(Propietario),
+    ARRENDATARIO(Arrendatario)
+}
+
+enum TipoInmueble {
+    APARTAMENTO(Apartamento),
+    CASA(Casa)
+}
+
+//── ENTIDADES ────────────────────────────
+
+entity TipoDocumento {
+    nombreTipoDocumento String maxlength(50)
+}
+
+entity Anuncios {
+	titulo String required maxlength(50)
+    descripcion String required maxlength(200)
+    fecha ZonedDateTime required
+    imagen ImageBlob 
+}
+
+entity Servicio {
+	disponibilidad String required maxlength(200)
+	nombreZonaComun String required maxlength(50)
+    descripcion String maxlength(200)
+}
+
+entity ConjuntoResidencial {
+	nombreConjunto String required 
+    direccionConjunto String required
+}
+
+enum TipoDisponibilidad{
+	ABIERTO(abierto),
+    CERRADO(cerrado),
+    MANTENIMIENTO(en_mantenimiento)
+}
+
+entity ServicioConjunto {
+	disponible TipoDisponibilidad required
+    aforoMaximo Integer required min(1)
+}
+
+entity VinculadoInmueble {
+    tipoVinculo TipoVinculo required
+}
+
+entity Reservas {
+	fechaSolicitud LocalDate required
+	fechaReserva LocalDate required
+    horaInicio LocalTime required
+    horafin LocalTime required
+    cuposApartados Integer min(1)
+    estado Estado required
+}
+
+entity FacturaDePago {
+    fechaEnvio LocalDate required
+    imagenFactura ImageBlob required
+}
+
+
+entity Vinculado {
+    nombres String required maxlength(50)
+    apellidos String required maxlength(50)
+    numeroDocumento String required maxlength(20)
+    telefono String maxlength(15)
+    correo String maxlength(100) required
+    activo Boolean required
+}
+
+entity Inmueble {
+    tipoInmueble TipoInmueble required
+    torre String maxlength(10)
+    numeroInmueble String required maxlength(10)
+    piso Integer
+}
+
+entity AdministradorConjunto {
+    nombres String required maxlength(50)
+    apellidos String required maxlength(50)
+    numeroDocumento String required maxlength(20)
+    telefono String maxlength(15)
+    correo String required
+    activo Boolean required
+}
+
+// RELACIONES
+relationship ManyToOne {
+
+    VinculadoInmueble{vinculado(numeroDocumento) required}
+        to Vinculado
+
+    VinculadoInmueble{inmueble(numeroInmueble) required}
+        to Inmueble
+
+    Inmueble{conjuntoResidencial(nombreConjunto) required}
+        to ConjuntoResidencial
+
+    FacturaDePago{conjuntoResidencial(nombreConjunto) required}
+        to ConjuntoResidencial
+
+	FacturaDePago{vinculado(numeroDocumento) required}
+        to Vinculado
+
+    Anuncios{conjuntoResidencial(nombreConjunto) required}
+        to ConjuntoResidencial
+
+    ServicioConjunto{conjuntoResidencial(nombreConjunto) required}
+        to ConjuntoResidencial
+
+    ServicioConjunto{servicio(nombreZonaComun) required}
+        to Servicio
+
+    Reservas{servicioConjunto required}
+        to ServicioConjunto
+
+    Reservas{vinculado(numeroDocumento) required}
+        to Vinculado
+
+	Anuncios{administradorConjunto(numeroDocumento) required}
+    	to AdministradorConjunto
+        
+    Vinculado{tipoDocumento(nombreTipoDocumento) required} 
+    	to TipoDocumento
+        
+	Vinculado{administradorConjunto(numeroDocumento) required}
+        to AdministradorConjunto
+        
+	AdministradorConjunto{conjuntoResidencial(nombreConjunto) required}
+        to ConjuntoResidencial
+
+	AdministradorConjunto{tipoDocumento(nombreTipoDocumento) required}
+        to TipoDocumento
+}
+
+relationship OneToOne {
+
+	AdministradorConjunto{user(login) required}
+        to User with builtInEntity
+        
+    Vinculado {user(login) required} 
+    	to User with builtInEntity
+}
+
+dto * with mapstruct
+service * with serviceImpl
+paginate * with pagination
+//search * with elasticsearch

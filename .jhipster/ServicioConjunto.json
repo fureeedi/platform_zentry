@@ -1,0 +1,43 @@
+{
+  "annotations": {
+    "changelogDate": "20260622214849"
+  },
+  "applications": ["zentry"],
+  "dto": "mapstruct",
+  "fields": [
+    {
+      "fieldName": "disponible",
+      "fieldType": "TipoDisponibilidad",
+      "fieldValidateRules": ["required"],
+      "fieldValues": "ABIERTO (abierto),CERRADO (cerrado),MANTENIMIENTO (en_mantenimiento)"
+    },
+    {
+      "fieldName": "aforoMaximo",
+      "fieldType": "Integer",
+      "fieldValidateRules": ["required", "min"],
+      "fieldValidateRulesMin": "1"
+    }
+  ],
+  "name": "ServicioConjunto",
+  "pagination": "pagination",
+  "relationships": [
+    {
+      "otherEntityField": "nombreConjunto",
+      "otherEntityName": "conjuntoResidencial",
+      "relationshipName": "conjuntoResidencial",
+      "relationshipSide": "left",
+      "relationshipType": "many-to-one",
+      "relationshipValidateRules": "required"
+    },
+    {
+      "otherEntityField": "nombreZonaComun",
+      "otherEntityName": "servicio",
+      "relationshipName": "servicio",
+      "relationshipSide": "left",
+      "relationshipType": "many-to-one",
+      "relationshipValidateRules": "required"
+    }
+  ],
+  "searchEngine": "no",
+  "service": "serviceImpl"
+}

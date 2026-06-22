@@ -1,0 +1,41 @@
+{
+  "annotations": {
+    "changelogDate": "20260622215149"
+  },
+  "applications": ["zentry"],
+  "dto": "mapstruct",
+  "fields": [
+    {
+      "fieldName": "fechaEnvio",
+      "fieldType": "LocalDate",
+      "fieldValidateRules": ["required"]
+    },
+    {
+      "fieldName": "imagenFactura",
+      "fieldType": "ImageBlob",
+      "fieldValidateRules": ["required"]
+    }
+  ],
+  "name": "FacturaDePago",
+  "pagination": "pagination",
+  "relationships": [
+    {
+      "otherEntityField": "nombreConjunto",
+      "otherEntityName": "conjuntoResidencial",
+      "relationshipName": "conjuntoResidencial",
+      "relationshipSide": "left",
+      "relationshipType": "many-to-one",
+      "relationshipValidateRules": "required"
+    },
+    {
+      "otherEntityField": "numeroDocumento",
+      "otherEntityName": "vinculado",
+      "relationshipName": "vinculado",
+      "relationshipSide": "left",
+      "relationshipType": "many-to-one",
+      "relationshipValidateRules": "required"
+    }
+  ],
+  "searchEngine": "no",
+  "service": "serviceImpl"
+}
