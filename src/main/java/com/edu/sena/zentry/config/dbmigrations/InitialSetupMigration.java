@@ -28,7 +28,11 @@ public class InitialSetupMigration {
         userAuthority = template.save(userAuthority);
         Authority adminAuthority = createAdminAuthority();
         adminAuthority = template.save(adminAuthority);
-        addUsers(userAuthority, adminAuthority);
+        Authority administradorConjuntoAuthority = createAdministradorConjuntoAuthority();
+        administradorConjuntoAuthority = template.save(administradorConjuntoAuthority);
+        Authority clienteAuthority = createClienteAuthority();
+        clienteAuthority = template.save(clienteAuthority);
+        addUsers(userAuthority, adminAuthority, administradorConjuntoAuthority, clienteAuthority);
     }
 
     @RollbackExecution
@@ -50,16 +54,35 @@ public class InitialSetupMigration {
         return userAuthority;
     }
 
-    private void addUsers(Authority userAuthority, Authority adminAuthority) {
+    private Authority createAdministradorConjuntoAuthority() {
+        Authority administradorConjuntoAuthority = createAuthority(AuthoritiesConstants.ADMINISTRADOR_CONJUNTO);
+        return administradorConjuntoAuthority;
+    }
+
+    private Authority createClienteAuthority() {
+        Authority clienteAuthority = createAuthority(AuthoritiesConstants.CLIENTE);
+        return clienteAuthority;
+    }
+
+    private void addUsers(
+        Authority userAuthority,
+        Authority adminAuthority,
+        Authority administradorConjuntoAuthority,
+        Authority clienteAuthority
+    ) {
         User user = createUser(userAuthority);
         template.save(user);
         User admin = createAdmin(adminAuthority, userAuthority);
         template.save(admin);
+        User administradorConjunto = createAdministradorConjunto(administradorConjuntoAuthority, userAuthority);
+        template.save(administradorConjunto);
+        User cliente = createCliente(clienteAuthority, userAuthority);
+        template.save(cliente);
     }
 
     private User createUser(Authority userAuthority) {
         User userUser = new User();
-        userUser.setId("user-2");
+        //userUser.setId("user-2");
         userUser.setLogin("user");
         userUser.setPassword("$2a$10$VEjxo0jq2YG9Rbk2HmX9S.k1uZBGYUHdUcid3g/vfiEl7lwWgOH/K");
         userUser.setFirstName("User");
@@ -75,7 +98,7 @@ public class InitialSetupMigration {
 
     private User createAdmin(Authority adminAuthority, Authority userAuthority) {
         User adminUser = new User();
-        adminUser.setId("user-1");
+        //adminUser.setId("user-1");
         adminUser.setLogin("admin");
         adminUser.setPassword("$2a$10$gSAhZrxMllrbgj/kkK9UceBPpChGWJA7SYIb1Mqo.n5aNLq1/oRrC");
         adminUser.setFirstName("admin");
@@ -88,5 +111,38 @@ public class InitialSetupMigration {
         adminUser.getAuthorities().add(adminAuthority);
         adminUser.getAuthorities().add(userAuthority);
         return adminUser;
+    }
+
+    private User createAdministradorConjunto(Authority administradorConjuntoAuthority, Authority userAuthority) {
+        User administradorConjuntoUser = new User();
+        administradorConjuntoUser.setLogin("administrador_conjunto");
+        administradorConjuntoUser.setPassword("$2a$10$VEjxo0jq2YG9Rbk2HmX9S.k1uZBGYUHdUcid3g/vfiEl7lwWgOH/K");
+        administradorConjuntoUser.setFirstName("administrador_conjunto");
+        administradorConjuntoUser.setLastName("administrador_conjunto");
+        administradorConjuntoUser.setEmail("administradorConjunto@localhost");
+        administradorConjuntoUser.setActivated(true);
+        administradorConjuntoUser.setLangKey("es");
+        administradorConjuntoUser.setCreatedBy(Constants.SYSTEM);
+        administradorConjuntoUser.setCreatedDate(Instant.now());
+        administradorConjuntoUser.getAuthorities().add(administradorConjuntoAuthority);
+        administradorConjuntoUser.getAuthorities().add(userAuthority);
+        return administradorConjuntoUser;
+    }
+
+    private User createCliente(Authority clienteAuthority, Authority userAuthority) {
+        User clienteUser = new User();
+        //adminUser.setId("user-1");
+        clienteUser.setLogin("cliente");
+        clienteUser.setPassword("$2a$10$gSAhZrxMllrbgj/kkK9UceBPpChGWJA7SYIb1Mqo.n5aNLq1/oRrC");
+        clienteUser.setFirstName("cliente");
+        clienteUser.setLastName("cliente");
+        clienteUser.setEmail("cliente@localhost");
+        clienteUser.setActivated(true);
+        clienteUser.setLangKey("es");
+        clienteUser.setCreatedBy(Constants.SYSTEM);
+        clienteUser.setCreatedDate(Instant.now());
+        clienteUser.getAuthorities().add(clienteAuthority);
+        clienteUser.getAuthorities().add(userAuthority);
+        return clienteUser;
     }
 }
