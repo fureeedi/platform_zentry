@@ -1,6 +1,7 @@
 package com.edu.sena.zentry.web.rest;
 
 import com.edu.sena.zentry.repository.ServicioRepository;
+import com.edu.sena.zentry.security.AuthoritiesConstants;
 import com.edu.sena.zentry.service.ServicioService;
 import com.edu.sena.zentry.service.dto.ServicioDTO;
 import com.edu.sena.zentry.web.rest.errors.BadRequestAlertException;
@@ -18,6 +19,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import tech.jhipster.web.util.HeaderUtil;
@@ -55,6 +57,9 @@ public class ServicioResource {
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
     @PostMapping("")
+    @PreAuthorize(
+        "hasAuthority(\"" + AuthoritiesConstants.ADMINISTRADOR_CONJUNTO + "\") or hasAuthority(\"" + AuthoritiesConstants.ADMIN + "\")"
+    )
     public ResponseEntity<ServicioDTO> createServicio(@Valid @RequestBody ServicioDTO servicioDTO) throws URISyntaxException {
         LOG.debug("REST request to save Servicio : {}", servicioDTO);
         if (servicioDTO.getId() != null) {
@@ -77,6 +82,9 @@ public class ServicioResource {
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
     @PutMapping("/{id}")
+    @PreAuthorize(
+        "hasAuthority(\"" + AuthoritiesConstants.ADMINISTRADOR_CONJUNTO + "\") or hasAuthority(\"" + AuthoritiesConstants.ADMIN + "\")"
+    )
     public ResponseEntity<ServicioDTO> updateServicio(
         @PathVariable(value = "id", required = false) final String id,
         @Valid @RequestBody ServicioDTO servicioDTO
@@ -111,6 +119,9 @@ public class ServicioResource {
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
     @PatchMapping(value = "/{id}", consumes = { "application/json", "application/merge-patch+json" })
+    @PreAuthorize(
+        "hasAuthority(\"" + AuthoritiesConstants.ADMINISTRADOR_CONJUNTO + "\") or hasAuthority(\"" + AuthoritiesConstants.ADMIN + "\")"
+    )
     public ResponseEntity<ServicioDTO> partialUpdateServicio(
         @PathVariable(value = "id", required = false) final String id,
         @NotNull @RequestBody ServicioDTO servicioDTO
@@ -142,6 +153,15 @@ public class ServicioResource {
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the list of Servicios in body.
      */
     @GetMapping("")
+    @PreAuthorize(
+        "hasAuthority(\"" +
+            AuthoritiesConstants.ADMINISTRADOR_CONJUNTO +
+            "\") or hasAuthority(\"" +
+            AuthoritiesConstants.ADMIN +
+            "\") or hasAuthority(\"" +
+            AuthoritiesConstants.CLIENTE +
+            "\")"
+    )
     public ResponseEntity<List<ServicioDTO>> getAllServicios(@org.springdoc.core.annotations.ParameterObject Pageable pageable) {
         LOG.debug("REST request to get a page of Servicios");
         Page<ServicioDTO> page = servicioService.findAll(pageable);
@@ -156,6 +176,15 @@ public class ServicioResource {
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the servicioDTO, or with status {@code 404 (Not Found)}.
      */
     @GetMapping("/{id}")
+    @PreAuthorize(
+        "hasAuthority(\"" +
+            AuthoritiesConstants.ADMINISTRADOR_CONJUNTO +
+            "\") or hasAuthority(\"" +
+            AuthoritiesConstants.ADMIN +
+            "\") or hasAuthority(\"" +
+            AuthoritiesConstants.CLIENTE +
+            "\")"
+    )
     public ResponseEntity<ServicioDTO> getServicio(@PathVariable("id") String id) {
         LOG.debug("REST request to get Servicio : {}", id);
         Optional<ServicioDTO> servicioDTO = servicioService.findOne(id);
@@ -169,6 +198,9 @@ public class ServicioResource {
      * @return the {@link ResponseEntity} with status {@code 204 (NO_CONTENT)}.
      */
     @DeleteMapping("/{id}")
+    @PreAuthorize(
+        "hasAuthority(\"" + AuthoritiesConstants.ADMINISTRADOR_CONJUNTO + "\") or hasAuthority(\"" + AuthoritiesConstants.ADMIN + "\")"
+    )
     public ResponseEntity<Void> deleteServicio(@PathVariable("id") String id) {
         LOG.debug("REST request to delete Servicio : {}", id);
         servicioService.delete(id);

@@ -1,6 +1,7 @@
 package com.edu.sena.zentry.web.rest;
 
 import com.edu.sena.zentry.repository.ServicioConjuntoRepository;
+import com.edu.sena.zentry.security.AuthoritiesConstants;
 import com.edu.sena.zentry.service.ServicioConjuntoService;
 import com.edu.sena.zentry.service.dto.ServicioConjuntoDTO;
 import com.edu.sena.zentry.web.rest.errors.BadRequestAlertException;
@@ -18,6 +19,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import tech.jhipster.web.util.HeaderUtil;
@@ -58,6 +60,9 @@ public class ServicioConjuntoResource {
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
     @PostMapping("")
+    @PreAuthorize(
+        "hasAuthority(\"" + AuthoritiesConstants.ADMINISTRADOR_CONJUNTO + "\") or hasAuthority(\"" + AuthoritiesConstants.ADMIN + "\")"
+    )
     public ResponseEntity<ServicioConjuntoDTO> createServicioConjunto(@Valid @RequestBody ServicioConjuntoDTO servicioConjuntoDTO)
         throws URISyntaxException {
         LOG.debug("REST request to save ServicioConjunto : {}", servicioConjuntoDTO);
@@ -81,6 +86,9 @@ public class ServicioConjuntoResource {
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
     @PutMapping("/{id}")
+    @PreAuthorize(
+        "hasAuthority(\"" + AuthoritiesConstants.ADMINISTRADOR_CONJUNTO + "\") or hasAuthority(\"" + AuthoritiesConstants.ADMIN + "\")"
+    )
     public ResponseEntity<ServicioConjuntoDTO> updateServicioConjunto(
         @PathVariable(value = "id", required = false) final String id,
         @Valid @RequestBody ServicioConjuntoDTO servicioConjuntoDTO
@@ -115,6 +123,9 @@ public class ServicioConjuntoResource {
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
     @PatchMapping(value = "/{id}", consumes = { "application/json", "application/merge-patch+json" })
+    @PreAuthorize(
+        "hasAuthority(\"" + AuthoritiesConstants.ADMINISTRADOR_CONJUNTO + "\") or hasAuthority(\"" + AuthoritiesConstants.ADMIN + "\")"
+    )
     public ResponseEntity<ServicioConjuntoDTO> partialUpdateServicioConjunto(
         @PathVariable(value = "id", required = false) final String id,
         @NotNull @RequestBody ServicioConjuntoDTO servicioConjuntoDTO
@@ -147,6 +158,15 @@ public class ServicioConjuntoResource {
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the list of Servicio Conjuntos in body.
      */
     @GetMapping("")
+    @PreAuthorize(
+        "hasAuthority(\"" +
+            AuthoritiesConstants.ADMINISTRADOR_CONJUNTO +
+            "\") or hasAuthority(\"" +
+            AuthoritiesConstants.CLIENTE +
+            "\") or hasAuthority(\"" +
+            AuthoritiesConstants.ADMIN +
+            "\")"
+    )
     public ResponseEntity<List<ServicioConjuntoDTO>> getAllServicioConjuntos(
         @org.springdoc.core.annotations.ParameterObject Pageable pageable,
         @RequestParam(name = "eagerload", required = false, defaultValue = "true") boolean eagerload
@@ -169,6 +189,15 @@ public class ServicioConjuntoResource {
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the servicioConjuntoDTO, or with status {@code 404 (Not Found)}.
      */
     @GetMapping("/{id}")
+    @PreAuthorize(
+        "hasAuthority(\"" +
+            AuthoritiesConstants.ADMINISTRADOR_CONJUNTO +
+            "\") or hasAuthority(\"" +
+            AuthoritiesConstants.CLIENTE +
+            "\") or hasAuthority(\"" +
+            AuthoritiesConstants.ADMIN +
+            "\")"
+    )
     public ResponseEntity<ServicioConjuntoDTO> getServicioConjunto(@PathVariable("id") String id) {
         LOG.debug("REST request to get ServicioConjunto : {}", id);
         Optional<ServicioConjuntoDTO> servicioConjuntoDTO = servicioConjuntoService.findOne(id);
@@ -182,6 +211,9 @@ public class ServicioConjuntoResource {
      * @return the {@link ResponseEntity} with status {@code 204 (NO_CONTENT)}.
      */
     @DeleteMapping("/{id}")
+    @PreAuthorize(
+        "hasAuthority(\"" + AuthoritiesConstants.ADMINISTRADOR_CONJUNTO + "\") or hasAuthority(\"" + AuthoritiesConstants.ADMIN + "\")"
+    )
     public ResponseEntity<Void> deleteServicioConjunto(@PathVariable("id") String id) {
         LOG.debug("REST request to delete ServicioConjunto : {}", id);
         servicioConjuntoService.delete(id);

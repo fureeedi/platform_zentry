@@ -1,6 +1,7 @@
 package com.edu.sena.zentry.web.rest;
 
 import com.edu.sena.zentry.repository.VinculadoRepository;
+import com.edu.sena.zentry.security.AuthoritiesConstants;
 import com.edu.sena.zentry.service.VinculadoService;
 import com.edu.sena.zentry.service.dto.VinculadoDTO;
 import com.edu.sena.zentry.web.rest.errors.BadRequestAlertException;
@@ -18,6 +19,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import tech.jhipster.web.util.HeaderUtil;
@@ -55,6 +57,9 @@ public class VinculadoResource {
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
     @PostMapping("")
+    @PreAuthorize(
+        "hasAuthority(\"" + AuthoritiesConstants.ADMINISTRADOR_CONJUNTO + "\") or hasAuthority(\"" + AuthoritiesConstants.ADMIN + "\")"
+    )
     public ResponseEntity<VinculadoDTO> createVinculado(@Valid @RequestBody VinculadoDTO vinculadoDTO) throws URISyntaxException {
         LOG.debug("REST request to save Vinculado : {}", vinculadoDTO);
         if (vinculadoDTO.getId() != null) {
@@ -77,6 +82,9 @@ public class VinculadoResource {
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
     @PutMapping("/{id}")
+    @PreAuthorize(
+        "hasAuthority(\"" + AuthoritiesConstants.ADMINISTRADOR_CONJUNTO + "\") or hasAuthority(\"" + AuthoritiesConstants.ADMIN + "\")"
+    )
     public ResponseEntity<VinculadoDTO> updateVinculado(
         @PathVariable(value = "id", required = false) final String id,
         @Valid @RequestBody VinculadoDTO vinculadoDTO
@@ -111,6 +119,9 @@ public class VinculadoResource {
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
     @PatchMapping(value = "/{id}", consumes = { "application/json", "application/merge-patch+json" })
+    @PreAuthorize(
+        "hasAuthority(\"" + AuthoritiesConstants.ADMINISTRADOR_CONJUNTO + "\") or hasAuthority(\"" + AuthoritiesConstants.ADMIN + "\")"
+    )
     public ResponseEntity<VinculadoDTO> partialUpdateVinculado(
         @PathVariable(value = "id", required = false) final String id,
         @NotNull @RequestBody VinculadoDTO vinculadoDTO
@@ -143,6 +154,15 @@ public class VinculadoResource {
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the list of Vinculados in body.
      */
     @GetMapping("")
+    @PreAuthorize(
+        "hasAuthority(\"" +
+            AuthoritiesConstants.ADMINISTRADOR_CONJUNTO +
+            "\") or hasAuthority(\"" +
+            AuthoritiesConstants.CLIENTE +
+            "\") or hasAuthority(\"" +
+            AuthoritiesConstants.ADMIN +
+            "\")"
+    )
     public ResponseEntity<List<VinculadoDTO>> getAllVinculados(
         @org.springdoc.core.annotations.ParameterObject Pageable pageable,
         @RequestParam(name = "eagerload", required = false, defaultValue = "true") boolean eagerload
@@ -165,6 +185,15 @@ public class VinculadoResource {
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the vinculadoDTO, or with status {@code 404 (Not Found)}.
      */
     @GetMapping("/{id}")
+    @PreAuthorize(
+        "hasAuthority(\"" +
+            AuthoritiesConstants.ADMINISTRADOR_CONJUNTO +
+            "\") or hasAuthority(\"" +
+            AuthoritiesConstants.CLIENTE +
+            "\") or hasAuthority(\"" +
+            AuthoritiesConstants.ADMIN +
+            "\")"
+    )
     public ResponseEntity<VinculadoDTO> getVinculado(@PathVariable("id") String id) {
         LOG.debug("REST request to get Vinculado : {}", id);
         Optional<VinculadoDTO> vinculadoDTO = vinculadoService.findOne(id);
@@ -178,6 +207,9 @@ public class VinculadoResource {
      * @return the {@link ResponseEntity} with status {@code 204 (NO_CONTENT)}.
      */
     @DeleteMapping("/{id}")
+    @PreAuthorize(
+        "hasAuthority(\"" + AuthoritiesConstants.ADMINISTRADOR_CONJUNTO + "\") or hasAuthority(\"" + AuthoritiesConstants.ADMIN + "\")"
+    )
     public ResponseEntity<Void> deleteVinculado(@PathVariable("id") String id) {
         LOG.debug("REST request to delete Vinculado : {}", id);
         vinculadoService.delete(id);
