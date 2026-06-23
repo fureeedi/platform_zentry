@@ -35,10 +35,16 @@ export const UserManagementUpdate = () => {
   };
 
   const saveUser = values => {
+    const valuesWithLangKey = {
+      ...values,
+      langkey: values.langkey || 'es',
+      id: values.id || undefined,
+    };
+
     if (isNew) {
-      dispatch(createUser(values));
+      dispatch(createUser(valuesWithLangKey));
     } else {
-      dispatch(updateUser(values));
+      dispatch(updateUser(valuesWithLangKey));
     }
     handleClose();
   };
