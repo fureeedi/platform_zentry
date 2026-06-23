@@ -1,6 +1,7 @@
 package com.edu.sena.zentry.web.rest;
 
 import com.edu.sena.zentry.repository.FacturaDePagoRepository;
+import com.edu.sena.zentry.security.AuthoritiesConstants;
 import com.edu.sena.zentry.service.FacturaDePagoService;
 import com.edu.sena.zentry.service.dto.FacturaDePagoDTO;
 import com.edu.sena.zentry.web.rest.errors.BadRequestAlertException;
@@ -18,6 +19,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import tech.jhipster.web.util.HeaderUtil;
@@ -55,6 +57,7 @@ public class FacturaDePagoResource {
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
     @PostMapping("")
+    @PreAuthorize("hasAuthority(\"" + AuthoritiesConstants.CLIENTE + "\") or hasAuthority(\"" + AuthoritiesConstants.ADMIN + "\")")
     public ResponseEntity<FacturaDePagoDTO> createFacturaDePago(@Valid @RequestBody FacturaDePagoDTO facturaDePagoDTO)
         throws URISyntaxException {
         LOG.debug("REST request to save FacturaDePago : {}", facturaDePagoDTO);
@@ -78,6 +81,9 @@ public class FacturaDePagoResource {
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
     @PutMapping("/{id}")
+    @PreAuthorize(
+        "hasAuthority(\"" + AuthoritiesConstants.ADMINISTRADOR_CONJUNTO + "\") or hasAuthority(\"" + AuthoritiesConstants.ADMIN + "\")"
+    )
     public ResponseEntity<FacturaDePagoDTO> updateFacturaDePago(
         @PathVariable(value = "id", required = false) final String id,
         @Valid @RequestBody FacturaDePagoDTO facturaDePagoDTO
@@ -112,6 +118,9 @@ public class FacturaDePagoResource {
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
     @PatchMapping(value = "/{id}", consumes = { "application/json", "application/merge-patch+json" })
+    @PreAuthorize(
+        "hasAuthority(\"" + AuthoritiesConstants.ADMINISTRADOR_CONJUNTO + "\") or hasAuthority(\"" + AuthoritiesConstants.ADMIN + "\")"
+    )
     public ResponseEntity<FacturaDePagoDTO> partialUpdateFacturaDePago(
         @PathVariable(value = "id", required = false) final String id,
         @NotNull @RequestBody FacturaDePagoDTO facturaDePagoDTO
@@ -144,6 +153,15 @@ public class FacturaDePagoResource {
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the list of Factura De Pagos in body.
      */
     @GetMapping("")
+    @PreAuthorize(
+        "hasAuthority(\"" +
+            AuthoritiesConstants.ADMINISTRADOR_CONJUNTO +
+            "\") or hasAuthority(\"" +
+            AuthoritiesConstants.CLIENTE +
+            "\") or hasAuthority(\"" +
+            AuthoritiesConstants.ADMIN +
+            "\")"
+    )
     public ResponseEntity<List<FacturaDePagoDTO>> getAllFacturaDePagos(
         @org.springdoc.core.annotations.ParameterObject Pageable pageable,
         @RequestParam(name = "eagerload", required = false, defaultValue = "true") boolean eagerload
@@ -166,6 +184,15 @@ public class FacturaDePagoResource {
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the facturaDePagoDTO, or with status {@code 404 (Not Found)}.
      */
     @GetMapping("/{id}")
+    @PreAuthorize(
+        "hasAuthority(\"" +
+            AuthoritiesConstants.ADMINISTRADOR_CONJUNTO +
+            "\") or hasAuthority(\"" +
+            AuthoritiesConstants.CLIENTE +
+            "\") or hasAuthority(\"" +
+            AuthoritiesConstants.ADMIN +
+            "\")"
+    )
     public ResponseEntity<FacturaDePagoDTO> getFacturaDePago(@PathVariable("id") String id) {
         LOG.debug("REST request to get FacturaDePago : {}", id);
         Optional<FacturaDePagoDTO> facturaDePagoDTO = facturaDePagoService.findOne(id);
@@ -179,6 +206,9 @@ public class FacturaDePagoResource {
      * @return the {@link ResponseEntity} with status {@code 204 (NO_CONTENT)}.
      */
     @DeleteMapping("/{id}")
+    @PreAuthorize(
+        "hasAuthority(\"" + AuthoritiesConstants.ADMINISTRADOR_CONJUNTO + "\") or hasAuthority(\"" + AuthoritiesConstants.ADMIN + "\")"
+    )
     public ResponseEntity<Void> deleteFacturaDePago(@PathVariable("id") String id) {
         LOG.debug("REST request to delete FacturaDePago : {}", id);
         facturaDePagoService.delete(id);

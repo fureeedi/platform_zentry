@@ -1,6 +1,7 @@
 package com.edu.sena.zentry.web.rest;
 
 import com.edu.sena.zentry.repository.ConjuntoResidencialRepository;
+import com.edu.sena.zentry.security.AuthoritiesConstants;
 import com.edu.sena.zentry.service.ConjuntoResidencialService;
 import com.edu.sena.zentry.service.dto.ConjuntoResidencialDTO;
 import com.edu.sena.zentry.web.rest.errors.BadRequestAlertException;
@@ -18,6 +19,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import tech.jhipster.web.util.HeaderUtil;
@@ -58,6 +60,7 @@ public class ConjuntoResidencialResource {
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
     @PostMapping("")
+    @PreAuthorize("hasAuthority(\"" + AuthoritiesConstants.ADMIN + "\")")
     public ResponseEntity<ConjuntoResidencialDTO> createConjuntoResidencial(
         @Valid @RequestBody ConjuntoResidencialDTO conjuntoResidencialDTO
     ) throws URISyntaxException {
@@ -82,6 +85,7 @@ public class ConjuntoResidencialResource {
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
     @PutMapping("/{id}")
+    @PreAuthorize("hasAuthority(\"" + AuthoritiesConstants.ADMIN + "\")")
     public ResponseEntity<ConjuntoResidencialDTO> updateConjuntoResidencial(
         @PathVariable(value = "id", required = false) final String id,
         @Valid @RequestBody ConjuntoResidencialDTO conjuntoResidencialDTO
@@ -116,6 +120,7 @@ public class ConjuntoResidencialResource {
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
     @PatchMapping(value = "/{id}", consumes = { "application/json", "application/merge-patch+json" })
+    @PreAuthorize("hasAuthority(\"" + AuthoritiesConstants.ADMIN + "\")")
     public ResponseEntity<ConjuntoResidencialDTO> partialUpdateConjuntoResidencial(
         @PathVariable(value = "id", required = false) final String id,
         @NotNull @RequestBody ConjuntoResidencialDTO conjuntoResidencialDTO
@@ -147,6 +152,7 @@ public class ConjuntoResidencialResource {
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the list of Conjunto Residencials in body.
      */
     @GetMapping("")
+    @PreAuthorize("hasAuthority(\"" + AuthoritiesConstants.ADMIN + "\")")
     public ResponseEntity<List<ConjuntoResidencialDTO>> getAllConjuntoResidencials(
         @org.springdoc.core.annotations.ParameterObject Pageable pageable
     ) {
@@ -163,6 +169,7 @@ public class ConjuntoResidencialResource {
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the conjuntoResidencialDTO, or with status {@code 404 (Not Found)}.
      */
     @GetMapping("/{id}")
+    @PreAuthorize("hasAuthority(\"" + AuthoritiesConstants.ADMIN + "\")")
     public ResponseEntity<ConjuntoResidencialDTO> getConjuntoResidencial(@PathVariable("id") String id) {
         LOG.debug("REST request to get ConjuntoResidencial : {}", id);
         Optional<ConjuntoResidencialDTO> conjuntoResidencialDTO = conjuntoResidencialService.findOne(id);
@@ -176,6 +183,7 @@ public class ConjuntoResidencialResource {
      * @return the {@link ResponseEntity} with status {@code 204 (NO_CONTENT)}.
      */
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasAuthority(\"" + AuthoritiesConstants.ADMIN + "\")")
     public ResponseEntity<Void> deleteConjuntoResidencial(@PathVariable("id") String id) {
         LOG.debug("REST request to delete ConjuntoResidencial : {}", id);
         conjuntoResidencialService.delete(id);
