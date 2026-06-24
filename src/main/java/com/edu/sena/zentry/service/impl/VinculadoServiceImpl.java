@@ -1,15 +1,22 @@
 package com.edu.sena.zentry.service.impl;
 
+import com.edu.sena.zentry.domain.Authority;
+import com.edu.sena.zentry.domain.User;
 import com.edu.sena.zentry.domain.Vinculado;
+import com.edu.sena.zentry.repository.AuthorityRepository;
+import com.edu.sena.zentry.repository.UserRepository;
 import com.edu.sena.zentry.repository.VinculadoRepository;
 import com.edu.sena.zentry.service.VinculadoService;
 import com.edu.sena.zentry.service.dto.VinculadoDTO;
 import com.edu.sena.zentry.service.mapper.VinculadoMapper;
+import java.util.HashSet;
 import java.util.Optional;
+import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 /**
@@ -24,15 +31,49 @@ public class VinculadoServiceImpl implements VinculadoService {
 
     private final VinculadoMapper vinculadoMapper;
 
-    public VinculadoServiceImpl(VinculadoRepository vinculadoRepository, VinculadoMapper vinculadoMapper) {
+    private final UserRepository userRepository;
+
+    private final AuthorityRepository authorityRepository;
+
+    private final PasswordEncoder passwordEncoder;
+
+    public VinculadoServiceImpl(
+        VinculadoRepository vinculadoRepository,
+        VinculadoMapper vinculadoMapper,
+        UserRepository userRepository,
+        AuthorityRepository authorityRepository,
+        PasswordEncoder passwordEncoder
+    ) {
         this.vinculadoRepository = vinculadoRepository;
         this.vinculadoMapper = vinculadoMapper;
+        this.userRepository = userRepository;
+        this.authorityRepository = authorityRepository;
+        this.passwordEncoder = passwordEncoder;
     }
 
     @Override
     public VinculadoDTO save(VinculadoDTO vinculadoDTO) {
         LOG.debug("Request to save Vinculado : {}", vinculadoDTO);
+
+        //crear user vinculado
+        User user = new User();
+        user.setLogin(vinculadoDTO.getLogin().toLowerCase());
+        user.setEmail(vinculadoDTO.getCorreo());
+        user.setActivated(true);
+        user.setLangKey("es");
+        user.setPassword(passwordEncoder.encode(vinculadoDTO.getPassword()));
+
+        //asignar rol a vinculado
+        Set<Authority> authorities = new HashSet<>();
+        authorityRepository.findById("ROLE_CLIENTE").ifPresent(authorities::add);
+        authorityRepository.findById("ROLE_USER").ifPresent(authorities::add);
+        user.setAuthorities(authorities);
+
+        //guardar user vinculado
+        user = userRepository.save(user);
+
         Vinculado vinculado = vinculadoMapper.toEntity(vinculadoDTO);
+        vinculado.setUser(user);
         vinculado = vinculadoRepository.save(vinculado);
         return vinculadoMapper.toDto(vinculado);
     }

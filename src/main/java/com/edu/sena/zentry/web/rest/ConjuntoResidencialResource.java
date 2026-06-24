@@ -152,7 +152,9 @@ public class ConjuntoResidencialResource {
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the list of Conjunto Residencials in body.
      */
     @GetMapping("")
-    @PreAuthorize("hasAuthority(\"" + AuthoritiesConstants.ADMIN + "\")")
+    @PreAuthorize(
+        "hasAuthority(\"" + AuthoritiesConstants.ADMIN + "\") or hasAuthority(\"" + AuthoritiesConstants.ADMINISTRADOR_CONJUNTO + "\")"
+    )
     public ResponseEntity<List<ConjuntoResidencialDTO>> getAllConjuntoResidencials(
         @org.springdoc.core.annotations.ParameterObject Pageable pageable
     ) {
@@ -169,7 +171,9 @@ public class ConjuntoResidencialResource {
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the conjuntoResidencialDTO, or with status {@code 404 (Not Found)}.
      */
     @GetMapping("/{id}")
-    @PreAuthorize("hasAuthority(\"" + AuthoritiesConstants.ADMIN + "\")")
+    @PreAuthorize(
+        "hasAuthority(\"" + AuthoritiesConstants.ADMIN + "\") or hasAuthority(\"" + AuthoritiesConstants.ADMINISTRADOR_CONJUNTO + "\")"
+    )
     public ResponseEntity<ConjuntoResidencialDTO> getConjuntoResidencial(@PathVariable("id") String id) {
         LOG.debug("REST request to get ConjuntoResidencial : {}", id);
         Optional<ConjuntoResidencialDTO> conjuntoResidencialDTO = conjuntoResidencialService.findOne(id);

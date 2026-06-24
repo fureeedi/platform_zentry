@@ -54,7 +54,7 @@ const AppRoutes = () => {
           <Route
             path="*"
             element={
-              <PrivateRoute hasAnyAuthorities={[Authority.USER]}>
+              <PrivateRoute hasAnyAuthorities={[Authority.USER, Authority.ADMINISTRADOR_CONJUNTO]}>
                 <EntitiesRoutes />
               </PrivateRoute>
             }

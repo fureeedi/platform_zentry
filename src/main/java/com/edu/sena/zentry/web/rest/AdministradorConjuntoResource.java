@@ -153,7 +153,9 @@ public class AdministradorConjuntoResource {
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the list of Administrador Conjuntos in body.
      */
     @GetMapping("")
-    @PreAuthorize("hasAuthority(\"" + AuthoritiesConstants.ADMIN + "\")")
+    @PreAuthorize(
+        "hasAuthority(\"" + AuthoritiesConstants.ADMIN + "\") or hasAuthority(\"" + AuthoritiesConstants.ADMINISTRADOR_CONJUNTO + "\")"
+    )
     public ResponseEntity<List<AdministradorConjuntoDTO>> getAllAdministradorConjuntos(
         @org.springdoc.core.annotations.ParameterObject Pageable pageable,
         @RequestParam(name = "eagerload", required = false, defaultValue = "true") boolean eagerload
