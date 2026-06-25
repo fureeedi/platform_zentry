@@ -33,6 +33,7 @@ export const App = () => {
   const isAdministradorConjunto = useAppSelector(state =>
     hasAnyAuthority(state.authentication.account.authorities, [Authority.ADMINISTRADOR_CONJUNTO]),
   );
+  const isCliente = useAppSelector(state => hasAnyAuthority(state.authentication.account.authorities, [Authority.CLIENTE]));
   const ribbonEnv = useAppSelector(state => state.applicationProfile.ribbonEnv);
   const isInProduction = useAppSelector(state => state.applicationProfile.inProduction);
   const isOpenAPIEnabled = useAppSelector(state => state.applicationProfile.isOpenAPIEnabled);
@@ -47,6 +48,7 @@ export const App = () => {
             isAuthenticated={isAuthenticated}
             isAdmin={isAdmin}
             isAdministradorConjunto={isAdministradorConjunto}
+            isCliente={isCliente}
             ribbonEnv={ribbonEnv}
             isInProduction={isInProduction}
             isOpenAPIEnabled={isOpenAPIEnabled}

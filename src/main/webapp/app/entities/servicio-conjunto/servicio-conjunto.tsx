@@ -7,6 +7,8 @@ import { faSort, faSortDown, faSortUp } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 import { useAppDispatch, useAppSelector } from 'app/config/store';
+import { Authority } from 'app/shared/jhipster/constants';
+import { hasAnyAuthority } from 'app/shared/auth/private-route';
 import { overridePaginationStateWithQueryParams } from 'app/shared/util/entity-utils';
 import { ASC, DESC, ITEMS_PER_PAGE, SORT } from 'app/shared/util/pagination.constants';
 
@@ -25,6 +27,9 @@ export const ServicioConjunto = () => {
   const servicioConjuntoList = useAppSelector(state => state.servicioConjunto.entities);
   const loading = useAppSelector(state => state.servicioConjunto.loading);
   const totalItems = useAppSelector(state => state.servicioConjunto.totalItems);
+  const account = useAppSelector(state => state.authentication.account);
+
+  const isAdministradorConjunto = hasAnyAuthority(account.authorities, [Authority.ADMIN, Authority.ADMINISTRADOR_CONJUNTO]);
 
   const getAllEntities = () => {
     dispatch(
@@ -98,10 +103,17 @@ export const ServicioConjunto = () => {
           <Button className="me-2" variant="info" onClick={handleSyncList} disabled={loading}>
             <FontAwesomeIcon icon="sync" spin={loading} /> Refrescar lista
           </Button>
-          <Link to="/servicio-conjunto/new" className="btn btn-primary jh-create-entity" id="jh-create-entity" data-cy="entityCreateButton">
-            <FontAwesomeIcon icon="plus" />
-            &nbsp; Crear nuevo Servicio Conjunto
-          </Link>
+          {isAdministradorConjunto && (
+            <Link
+              to="/servicio-conjunto/new"
+              className="btn btn-primary jh-create-entity"
+              id="jh-create-entity"
+              data-cy="entityCreateButton"
+            >
+              <FontAwesomeIcon icon="plus" />
+              &nbsp; Crear nuevo Servicio Conjunto
+            </Link>
+          )}
         </div>
       </h2>
       <div className="table-responsive">
@@ -164,25 +176,29 @@ export const ServicioConjunto = () => {
                       >
                         <FontAwesomeIcon icon="eye" /> <span className="d-none d-md-inline">Vista</span>
                       </Button>
-                      <Button
-                        as={Link as any}
-                        to={`/servicio-conjunto/${servicioConjunto.id}/edit?page=${paginationState.activePage}&sort=${paginationState.sort},${paginationState.order}`}
-                        variant="primary"
-                        size="sm"
-                        data-cy="entityEditButton"
-                      >
-                        <FontAwesomeIcon icon="pencil-alt" /> <span className="d-none d-md-inline">Editar</span>
-                      </Button>
-                      <Button
-                        onClick={() =>
-                          (window.location.href = `/servicio-conjunto/${servicioConjunto.id}/delete?page=${paginationState.activePage}&sort=${paginationState.sort},${paginationState.order}`)
-                        }
-                        variant="danger"
-                        size="sm"
-                        data-cy="entityDeleteButton"
-                      >
-                        <FontAwesomeIcon icon="trash" /> <span className="d-none d-md-inline">Eliminar</span>
-                      </Button>
+                      {isAdministradorConjunto && (
+                        <>
+                          <Button
+                            as={Link as any}
+                            to={`/servicio-conjunto/${servicioConjunto.id}/edit?page=${paginationState.activePage}&sort=${paginationState.sort},${paginationState.order}`}
+                            variant="primary"
+                            size="sm"
+                            data-cy="entityEditButton"
+                          >
+                            <FontAwesomeIcon icon="pencil-alt" /> <span className="d-none d-md-inline">Editar</span>
+                          </Button>
+                          <Button
+                            onClick={() =>
+                              (window.location.href = `/servicio-conjunto/${servicioConjunto.id}/delete?page=${paginationState.activePage}&sort=${paginationState.sort},${paginationState.order}`)
+                            }
+                            variant="danger"
+                            size="sm"
+                            data-cy="entityDeleteButton"
+                          >
+                            <FontAwesomeIcon icon="trash" /> <span className="d-none d-md-inline">Eliminar</span>
+                          </Button>
+                        </>
+                      )}
                     </div>
                   </td>
                 </tr>

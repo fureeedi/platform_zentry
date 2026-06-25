@@ -153,7 +153,13 @@ public class ConjuntoResidencialResource {
      */
     @GetMapping("")
     @PreAuthorize(
-        "hasAuthority(\"" + AuthoritiesConstants.ADMIN + "\") or hasAuthority(\"" + AuthoritiesConstants.ADMINISTRADOR_CONJUNTO + "\")"
+        "hasAuthority(\"" +
+            AuthoritiesConstants.ADMIN +
+            "\") or hasAuthority(\"" +
+            AuthoritiesConstants.ADMINISTRADOR_CONJUNTO +
+            "\") or hasAuthority(\"" +
+            AuthoritiesConstants.CLIENTE +
+            "\")"
     )
     public ResponseEntity<List<ConjuntoResidencialDTO>> getAllConjuntoResidencials(
         @org.springdoc.core.annotations.ParameterObject Pageable pageable
@@ -172,7 +178,13 @@ public class ConjuntoResidencialResource {
      */
     @GetMapping("/{id}")
     @PreAuthorize(
-        "hasAuthority(\"" + AuthoritiesConstants.ADMIN + "\") or hasAuthority(\"" + AuthoritiesConstants.ADMINISTRADOR_CONJUNTO + "\")"
+        "hasAuthority(\"" +
+            AuthoritiesConstants.ADMIN +
+            "\") or hasAuthority(\"" +
+            AuthoritiesConstants.ADMINISTRADOR_CONJUNTO +
+            "\") or hasAuthority(\"" +
+            AuthoritiesConstants.CLIENTE +
+            "\")"
     )
     public ResponseEntity<ConjuntoResidencialDTO> getConjuntoResidencial(@PathVariable("id") String id) {
         LOG.debug("REST request to get ConjuntoResidencial : {}", id);
