@@ -34,7 +34,7 @@ public class VinculadoDTO implements Serializable {
     @NotNull
     private Boolean activo;
 
-    @NotNull
+    // se quita el @NotNull
     private UserDTO user;
 
     @NotNull
@@ -42,6 +42,12 @@ public class VinculadoDTO implements Serializable {
 
     @NotNull
     private AdministradorConjuntoDTO administradorConjunto;
+
+    @NotNull
+    private String login;
+
+    @NotNull
+    private String password;
 
     public String getId() {
         return id;
@@ -121,6 +127,22 @@ public class VinculadoDTO implements Serializable {
 
     public void setAdministradorConjunto(AdministradorConjuntoDTO administradorConjunto) {
         this.administradorConjunto = administradorConjunto;
+    }
+
+    public String getLogin() {
+        return login;
+    }
+
+    public void setLogin(String login) {
+        this.login = login;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
     }
 
     @Override

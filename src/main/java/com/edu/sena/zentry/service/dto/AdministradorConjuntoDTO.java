@@ -33,7 +33,7 @@ public class AdministradorConjuntoDTO implements Serializable {
     @NotNull
     private Boolean activo;
 
-    @NotNull
+    // se quita el @NotNull
     private UserDTO user;
 
     @NotNull
@@ -41,6 +41,12 @@ public class AdministradorConjuntoDTO implements Serializable {
 
     @NotNull
     private TipoDocumentoDTO tipoDocumento;
+
+    @NotNull
+    private String login;
+
+    @NotNull
+    private String password;
 
     public String getId() {
         return id;
@@ -120,6 +126,22 @@ public class AdministradorConjuntoDTO implements Serializable {
 
     public void setTipoDocumento(TipoDocumentoDTO tipoDocumento) {
         this.tipoDocumento = tipoDocumento;
+    }
+
+    public String getLogin() {
+        return login;
+    }
+
+    public void setLogin(String login) {
+        this.login = login;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
     }
 
     @Override
