@@ -23,6 +23,9 @@ export const AdministradorConjuntoMenu = () => (
     <MenuItem icon="asterisk" to="/inmueble">
       Inmueble
     </MenuItem>
+    <MenuItem icon="asterisk" to="/vinculado">
+      Vinculado
+    </MenuItem>
     <MenuItem icon="asterisk" to="/vinculado-inmueble">
       Vinculado Inmueble
     </MenuItem>

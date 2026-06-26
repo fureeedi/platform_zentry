@@ -30,13 +30,13 @@ public class ReservasDTO implements Serializable {
     @Min(value = 1)
     private Integer cuposApartados;
 
-    @NotNull
+    // Se quita @NotNull
     private Estado estado;
 
     @NotNull
     private ServicioConjuntoDTO servicioConjunto;
 
-    @NotNull
+    // Se quita @NotNull
     private VinculadoDTO vinculado;
 
     public String getId() {
