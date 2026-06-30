@@ -25,7 +25,7 @@ const Header = (props: IHeaderProps) => {
   return (
     <div id="app-header">
       <LoadingBar className="loading-bar" />
-      <Navbar data-cy="navbar" data-bs-theme="dark" expand="md" fixed="top" className="bg-primary" collapseOnSelect>
+      <Navbar data-cy="navbar" data-bs-theme="dark" expand="md" fixed="top" className="navbar-zentry" collapseOnSelect>
         <Navbar.Toggle aria-controls="header-tabs" aria-label="Menu" />
         <Brand />
         <Navbar.Collapse id="header-tabs">

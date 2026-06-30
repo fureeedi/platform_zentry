@@ -1,8 +1,7 @@
 import './home.scss';
 
 import React from 'react';
-import { Alert, Col, Row } from 'react-bootstrap';
-import { Link } from 'react-router';
+import { Col, Row } from 'react-bootstrap';
 
 import { useAppSelector } from 'app/config/store';
 
@@ -10,28 +9,28 @@ export const Home = () => {
   const account = useAppSelector(state => state.authentication.account);
 
   return (
-    <Row>
-      <Col md="9">
-        <h1 className="display-4">¡Bienvenido, a Zentry!</h1>
-        <p className="lead">Esta es su página de inicio</p>
+    <Row className="justify-content-center align-items-center" style={{ minHeight: '60vh' }}>
+      <Col md="10" lg="8" className="text-center px-4">
+        <h1 className="display-4 text-white fw-bold mb-3">¡Bienvenido a Zentry!</h1>
+
+        <p className="fs-5 text-light opacity-75 mb-5 lh-base">
+          Una plataforma diseñada para administrar anuncios, reservas de zonas comunes y comunicación entre administradores y residentes.
+        </p>
+
         {account?.login ? (
-          <div>
-            <Alert variant="success">Está conectado como &quot;{account.login}&quot;.</Alert>
+          <div className="text-white">
+            <p>Ya has iniciado sesión como {account.login}.</p>
           </div>
         ) : (
-          <div>
-            <Alert variant="warning">
-              Si desea
-              <span>&nbsp;</span>
-              <Link to="/login" className="alert-link">
-                iniciar sesión
-              </Link>
-              , puede intentar con las cuentas predeterminadas:
-              <br />- Administrador (usuario=&quot;admin&quot; y contraseña=&quot;admin&quot;) <br />- Usuario (usuario=&quot;user&quot; y
-              contraseña=&quot;user&quot;).
-            </Alert>
+          <div className="d-flex flex-column align-items-center gap-3">
+            <a href="/login" className="btn btn-info btn-lg px-5 py-3 fw-bold shadow-sm">
+              Iniciar sesión
+            </a>
 
-            <Alert variant="warning">¿Aún no tienes una cuenta?&nbsp;</Alert>
+            <p className="small text-light opacity-50 mt-2">
+              ¿Aún no tienes una cuenta?{' '}
+              <span className="text-white text-decoration-underline fw-semibold">Solicítala al administrador</span>
+            </p>
           </div>
         )}
       </Col>

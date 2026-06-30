@@ -79,21 +79,32 @@ const LoginModal = (props: ILoginModalProps) => {
               />
             </Col>
           </Row>
-          <div className="mt-1">&nbsp;</div>
-          <Alert variant="warning">
-            <Link to="/account/reset/request" data-cy="forgetYourPasswordSelector">
+          <div className="mt-3"></div>
+
+          <div className="d-flex flex-column gap-2 mb-3 px-1">
+            <Link
+              to="/account/reset/request"
+              data-cy="forgetYourPasswordSelector"
+              className="text-light opacity-75 small text-decoration-underline"
+              style={{ fontSize: '0.9rem' }}
+            >
               ¿Ha olvidado su contraseña?
             </Link>
-          </Alert>
-          <Alert variant="warning">
-            <span>¿Aún no tienes una cuenta?</span> <Link to="/account/register">Crea una cuenta</Link>
-          </Alert>
+
+            <span className="text-light opacity-75 small" style={{ fontSize: '0.9rem' }}>
+              ¿Aún no tienes una cuenta?{' '}
+              <Link to="/account/register" className="text-info fw-semibold text-decoration-underline">
+                Crea una cuenta
+              </Link>
+            </span>
+          </div>
         </ModalBody>
-        <ModalFooter>
-          <Button variant="secondary" onClick={handleClose} tabIndex={1}>
+
+        <ModalFooter className="border-top border-secondary border-opacity-25 pt-3">
+          <Button variant="secondary" onClick={handleClose} tabIndex={1} className="px-4">
             Cancelar
           </Button>{' '}
-          <Button variant="primary" type="submit" data-cy="submit">
+          <Button type="submit" data-cy="submit" className="px-4 fw-bold text-white" style={{ backgroundColor: '#2b7fa2', border: 'none' }}>
             Iniciar sesión
           </Button>
         </ModalFooter>

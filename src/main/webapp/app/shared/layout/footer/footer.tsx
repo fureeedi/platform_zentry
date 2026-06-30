@@ -7,7 +7,7 @@ const Footer = () => (
   <div className="footer page-content">
     <Row>
       <Col md="12">
-        <p>Pie de página</p>
+        <p>© 2026 Zentry Sistema de Gestión para Conjuntos Residenciales</p>
       </Col>
     </Row>
   </div>
