@@ -67,6 +67,19 @@ export const partialUpdateEntity = createAsyncThunk(
   { serializeError: serializeAxiosError },
 );
 
+export const cambiarEstado = createAsyncThunk(
+  'reservas/cambiar_estado',
+  async ({ id, estado }: { id: string; estado: string }, thunkAPI) => {
+    const requestUrl = `${apiUrl}/${id}/estado?estado=${estado}`;
+    const result = await axios.patch<IReservas>(requestUrl);
+
+    thunkAPI.dispatch(getEntities({}));
+
+    return result;
+  },
+  { serializeError: serializeAxiosError },
+);
+
 export const deleteEntity = createAsyncThunk(
   'reservas/delete_entity',
   async (id: string | number, thunkAPI) => {
@@ -104,7 +117,7 @@ export const ReservasSlice = createEntitySlice({
           totalItems: parseInt(headers['x-total-count'], 10),
         };
       })
-      .addMatcher(isFulfilled(createEntity, updateEntity, partialUpdateEntity), (state, action) => {
+      .addMatcher(isFulfilled(createEntity, updateEntity, partialUpdateEntity, cambiarEstado), (state, action) => {
         state.updating = false;
         state.loading = false;
         state.updateSuccess = true;
@@ -115,7 +128,7 @@ export const ReservasSlice = createEntitySlice({
         state.updateSuccess = false;
         state.loading = true;
       })
-      .addMatcher(isPending(createEntity, updateEntity, partialUpdateEntity, deleteEntity), state => {
+      .addMatcher(isPending(createEntity, updateEntity, partialUpdateEntity, deleteEntity, cambiarEstado), state => {
         state.errorMessage = null;
         state.updateSuccess = false;
         state.updating = true;

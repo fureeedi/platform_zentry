@@ -13,7 +13,7 @@ import { hasAnyAuthority } from 'app/shared/auth/private-route';
 import { overridePaginationStateWithQueryParams } from 'app/shared/util/entity-utils';
 import { ASC, DESC, ITEMS_PER_PAGE, SORT } from 'app/shared/util/pagination.constants';
 
-import { getEntities } from './reservas.reducer';
+import { getEntities, cambiarEstado } from './reservas.reducer';
 
 export const Reservas = () => {
   const dispatch = useAppDispatch();
@@ -176,7 +176,11 @@ export const Reservas = () => {
                   <td>{reservas.horaInicio}</td>
                   <td>{reservas.horafin}</td>
                   <td>{reservas.cuposApartados}</td>
-                  <td>{reservas.estado}</td>
+                  <td>
+                    {reservas.estado === 'PENDIENTE' && <span className="badge bg-warning text-dark">Pendiente</span>}
+                    {reservas.estado === 'APROBADO' && <span className="badge bg-success">Aprobado</span>}
+                    {reservas.estado === 'RECHAZADO' && <span className="badge bg-danger">Rechazado</span>}
+                  </td>
                   <td>
                     {reservas.servicioConjunto ? (
                       <Link to={`/servicio-conjunto/${reservas.servicioConjunto.id}`}>
@@ -199,26 +203,73 @@ export const Reservas = () => {
                   )}
                   <td className="text-end">
                     <div className="btn-group flex-btn-group-container">
-                      <Button as={Link as any} to={`/reservas/${reservas.id}`} variant="info" size="sm" data-cy="entityDetailsButton">
+                      <Button
+                        as={Link as any}
+                        to={`/reservas/${reservas.id}`}
+                        variant="info"
+                        size="sm"
+                        className="me-1"
+                        data-cy="entityDetailsButton"
+                      >
                         <FontAwesomeIcon icon="eye" /> <span className="d-none d-md-inline">Vista</span>
                       </Button>
-                      {isAdministradorConjunto && (
+                      {isAdministradorConjunto && reservas.estado === 'PENDIENTE' && (
+                        <>
+                          <Button
+                            variant="success"
+                            size="sm"
+                            className="me-1"
+                            onClick={() =>
+                              dispatch(
+                                cambiarEstado({
+                                  id: reservas.id!,
+                                  estado: 'APROBADO',
+                                }),
+                              )
+                            }
+                          >
+                            Aprobar
+                          </Button>
+                          <Button
+                            variant="danger"
+                            size="sm"
+                            className="me-1"
+                            onClick={() =>
+                              dispatch(
+                                cambiarEstado({
+                                  id: reservas.id!,
+                                  estado: 'RECHAZADO',
+                                }),
+                              )
+                            }
+                          >
+                            Rechazar
+                          </Button>
+                        </>
+                      )}
+                      {isAdmin && (
                         <>
                           <Button
                             as={Link as any}
                             to={`/reservas/${reservas.id}/edit?page=${paginationState.activePage}&sort=${paginationState.sort},${paginationState.order}`}
                             variant="primary"
                             size="sm"
+                            className="me-1"
                             data-cy="entityEditButton"
                           >
                             <FontAwesomeIcon icon="pencil-alt" /> <span className="d-none d-md-inline">Editar</span>
                           </Button>
+                        </>
+                      )}
+                      {isAdministradorConjunto && (
+                        <>
                           <Button
                             onClick={() =>
                               (window.location.href = `/reservas/${reservas.id}/delete?page=${paginationState.activePage}&sort=${paginationState.sort},${paginationState.order}`)
                             }
-                            variant="danger"
+                            variant="warning"
                             size="sm"
+                            className="me-1"
                             data-cy="entityDeleteButton"
                           >
                             <FontAwesomeIcon icon="trash" /> <span className="d-none d-md-inline">Eliminar</span>

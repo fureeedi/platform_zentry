@@ -108,4 +108,13 @@ public class ReservasServiceImpl implements ReservasService {
         LOG.debug("Request to delete Reservas : {}", id);
         reservasRepository.deleteById(id);
     }
+
+    @Override
+    public ReservasDTO cambiarEstado(String id, Estado estado) {
+        LOG.debug("Request para cambiar el estado de la reserva {} a {}", id, estado);
+        Reservas reservas = reservasRepository.findById(id).orElseThrow(() -> new RuntimeException("Reserva no encontrada"));
+        reservas.setEstado(estado);
+        reservas = reservasRepository.save(reservas);
+        return reservasMapper.toDto(reservas);
+    }
 }

@@ -1,5 +1,6 @@
 package com.edu.sena.zentry.web.rest;
 
+import com.edu.sena.zentry.domain.enumeration.Estado;
 import com.edu.sena.zentry.repository.ReservasRepository;
 import com.edu.sena.zentry.security.AuthoritiesConstants;
 import com.edu.sena.zentry.service.ReservasService;
@@ -142,6 +143,19 @@ public class ReservasResource {
             result,
             HeaderUtil.createEntityUpdateAlert(applicationName, false, ENTITY_NAME, reservasDTO.getId())
         );
+    }
+
+    /**
+     *
+     */
+    @PatchMapping("/{id}/estado")
+    @PreAuthorize("hasAuthority(\"" + AuthoritiesConstants.ADMINISTRADOR_CONJUNTO + "\")")
+    public ResponseEntity<ReservasDTO> cambiarEstado(@PathVariable String id, @RequestParam Estado estado) {
+        LOG.debug("REST request para cambiar el estado de la reserva {} a {}", id, estado);
+
+        ReservasDTO resultado = reservasService.cambiarEstado(id, estado);
+
+        return ResponseEntity.ok(resultado);
     }
 
     /**
