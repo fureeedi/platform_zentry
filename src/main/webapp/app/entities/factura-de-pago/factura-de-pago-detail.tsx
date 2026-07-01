@@ -12,15 +12,15 @@ import { Authority } from 'app/shared/jhipster/constants';
 
 import { getEntity } from './factura-de-pago.reducer';
 
-const isAdmin = useAppSelector(state => hasAnyAuthority(state.authentication.account.authorities, [Authority.ADMIN]));
-const isAdministradorConjunto = useAppSelector(state =>
-  hasAnyAuthority(state.authentication.account.authorities, [Authority.ADMINISTRADOR_CONJUNTO]),
-);
-
 export const FacturaDePagoDetail = () => {
   const dispatch = useAppDispatch();
 
   const { id } = useParams<'id'>();
+
+  const isAdmin = useAppSelector(state => hasAnyAuthority(state.authentication.account.authorities, [Authority.ADMIN]));
+  const isAdministradorConjunto = useAppSelector(state =>
+    hasAnyAuthority(state.authentication.account.authorities, [Authority.ADMINISTRADOR_CONJUNTO]),
+  );
 
   useEffect(() => {
     dispatch(getEntity(id));
@@ -85,9 +85,11 @@ export const FacturaDePagoDetail = () => {
           <FontAwesomeIcon icon="arrow-left" /> <span className="d-none d-md-inline">Volver</span>
         </Button>
         &nbsp;
-        <Button as={Link as any} to={`/factura-de-pago/${facturaDePagoEntity.id}/edit`} replace variant="primary">
-          <FontAwesomeIcon icon="pencil-alt" /> <span className="d-none d-md-inline">Editar</span>
-        </Button>
+        {isAdmin && (
+          <Button as={Link as any} to={`/factura-de-pago/${facturaDePagoEntity.id}/edit`} replace variant="primary">
+            <FontAwesomeIcon icon="pencil-alt" /> <span className="d-none d-md-inline">Editar</span>
+          </Button>
+        )}
       </Col>
     </Row>
   );
