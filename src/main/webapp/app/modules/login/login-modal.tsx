@@ -90,13 +90,6 @@ const LoginModal = (props: ILoginModalProps) => {
             >
               ¿Ha olvidado su contraseña?
             </Link>
-
-            <span className="text-light opacity-75 small" style={{ fontSize: '0.9rem' }}>
-              ¿Aún no tienes una cuenta?{' '}
-              <Link to="/account/register" className="text-info fw-semibold text-decoration-underline">
-                Crea una cuenta
-              </Link>
-            </span>
           </div>
         </ModalBody>
 
