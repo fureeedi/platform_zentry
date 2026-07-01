@@ -6,6 +6,8 @@ import { Link, useNavigate, useParams } from 'react-router';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 import { useAppDispatch, useAppSelector } from 'app/config/store';
+import { hasAnyAuthority } from 'app/shared/auth/private-route';
+import { Authority } from 'app/shared/jhipster/constants';
 import { getEntities as getServicioConjuntos } from 'app/entities/servicio-conjunto/servicio-conjunto.reducer';
 import { getEntities as getVinculados } from 'app/entities/vinculado/vinculado.reducer';
 import { Estado } from 'app/shared/model/enumerations/estado.model';
@@ -26,6 +28,9 @@ export const ReservasUpdate = () => {
   const loading = useAppSelector(state => state.reservas.loading);
   const updating = useAppSelector(state => state.reservas.updating);
   const updateSuccess = useAppSelector(state => state.reservas.updateSuccess);
+  const isAdministradorConjunto = useAppSelector(state =>
+    hasAnyAuthority(state.authentication.account.authorities, [Authority.ADMINISTRADOR_CONJUNTO]),
+  );
   const estadoValues = Object.keys(Estado);
 
   const handleClose = () => {
@@ -147,13 +152,15 @@ export const ReservasUpdate = () => {
                   validate: v => isNumber(v) || 'Este campo debe ser un número.',
                 }}
               />
-              <ValidatedField label="Estado" id="reservas-estado" name="estado" data-cy="estado" type="select">
-                {estadoValues.map(estado => (
-                  <option value={estado} key={estado}>
-                    {estado}
-                  </option>
-                ))}
-              </ValidatedField>
+              {isAdministradorConjunto && (
+                <ValidatedField label="Estado" id="reservas-estado" name="estado" data-cy="estado" type="select">
+                  {estadoValues.map(estado => (
+                    <option value={estado} key={estado}>
+                      {estado}
+                    </option>
+                  ))}
+                </ValidatedField>
+              )}
               <ValidatedField
                 id="reservas-servicioConjunto"
                 name="servicioConjunto"
@@ -166,23 +173,27 @@ export const ReservasUpdate = () => {
                 {servicioConjuntos
                   ? servicioConjuntos.map(otherEntity => (
                       <option value={otherEntity.id} key={otherEntity.id}>
-                        {otherEntity.id}
+                        {otherEntity.servicio?.nombreZonaComun}
                       </option>
                     ))
                   : null}
               </ValidatedField>
               <FormText>Este campo es obligatorio.</FormText>
-              <ValidatedField id="reservas-vinculado" name="vinculado" data-cy="vinculado" label="Vinculado" type="select" required>
-                <option value="" key="0" />
-                {vinculados
-                  ? vinculados.map(otherEntity => (
-                      <option value={otherEntity.id} key={otherEntity.id}>
-                        {otherEntity.numeroDocumento}
-                      </option>
-                    ))
-                  : null}
-              </ValidatedField>
-              <FormText>Este campo es obligatorio.</FormText>
+              {isAdministradorConjunto && (
+                <>
+                  <ValidatedField id="reservas-vinculado" name="vinculado" data-cy="vinculado" label="Vinculado" type="select" required>
+                    <option value="" key="0" />
+                    {vinculados
+                      ? vinculados.map(otherEntity => (
+                          <option value={otherEntity.id} key={otherEntity.id}>
+                            {`${otherEntity.nombres} ${otherEntity.apellidos} - ${otherEntity.numeroDocumento}`}
+                          </option>
+                        ))
+                      : null}
+                  </ValidatedField>
+                  <FormText>Este campo es obligatorio.</FormText>
+                </>
+              )}
               <Button as={Link as any} id="cancel-save" data-cy="entityCreateCancelButton" to="/reservas" replace variant="info">
                 <FontAwesomeIcon icon="arrow-left" />
                 &nbsp;

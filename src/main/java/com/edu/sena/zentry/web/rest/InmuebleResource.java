@@ -1,6 +1,7 @@
 package com.edu.sena.zentry.web.rest;
 
 import com.edu.sena.zentry.repository.InmuebleRepository;
+import com.edu.sena.zentry.security.AuthoritiesConstants;
 import com.edu.sena.zentry.service.InmuebleService;
 import com.edu.sena.zentry.service.dto.InmuebleDTO;
 import com.edu.sena.zentry.web.rest.errors.BadRequestAlertException;
@@ -18,6 +19,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import tech.jhipster.web.util.HeaderUtil;
@@ -55,6 +57,9 @@ public class InmuebleResource {
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
     @PostMapping("")
+    @PreAuthorize(
+        "hasAuthority(\"" + AuthoritiesConstants.ADMINISTRADOR_CONJUNTO + "\") or hasAuthority(\"" + AuthoritiesConstants.ADMIN + "\")"
+    )
     public ResponseEntity<InmuebleDTO> createInmueble(@Valid @RequestBody InmuebleDTO inmuebleDTO) throws URISyntaxException {
         LOG.debug("REST request to save Inmueble : {}", inmuebleDTO);
         if (inmuebleDTO.getId() != null) {
@@ -77,6 +82,9 @@ public class InmuebleResource {
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
     @PutMapping("/{id}")
+    @PreAuthorize(
+        "hasAuthority(\"" + AuthoritiesConstants.ADMINISTRADOR_CONJUNTO + "\") or hasAuthority(\"" + AuthoritiesConstants.ADMIN + "\")"
+    )
     public ResponseEntity<InmuebleDTO> updateInmueble(
         @PathVariable(value = "id", required = false) final String id,
         @Valid @RequestBody InmuebleDTO inmuebleDTO
@@ -111,6 +119,9 @@ public class InmuebleResource {
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
     @PatchMapping(value = "/{id}", consumes = { "application/json", "application/merge-patch+json" })
+    @PreAuthorize(
+        "hasAuthority(\"" + AuthoritiesConstants.ADMINISTRADOR_CONJUNTO + "\") or hasAuthority(\"" + AuthoritiesConstants.ADMIN + "\")"
+    )
     public ResponseEntity<InmuebleDTO> partialUpdateInmueble(
         @PathVariable(value = "id", required = false) final String id,
         @NotNull @RequestBody InmuebleDTO inmuebleDTO
@@ -143,6 +154,9 @@ public class InmuebleResource {
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the list of Inmuebles in body.
      */
     @GetMapping("")
+    @PreAuthorize(
+        "hasAuthority(\"" + AuthoritiesConstants.ADMINISTRADOR_CONJUNTO + "\") or hasAuthority(\"" + AuthoritiesConstants.ADMIN + "\")"
+    )
     public ResponseEntity<List<InmuebleDTO>> getAllInmuebles(
         @org.springdoc.core.annotations.ParameterObject Pageable pageable,
         @RequestParam(name = "eagerload", required = false, defaultValue = "true") boolean eagerload
@@ -165,6 +179,9 @@ public class InmuebleResource {
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the inmuebleDTO, or with status {@code 404 (Not Found)}.
      */
     @GetMapping("/{id}")
+    @PreAuthorize(
+        "hasAuthority(\"" + AuthoritiesConstants.ADMINISTRADOR_CONJUNTO + "\") or hasAuthority(\"" + AuthoritiesConstants.ADMIN + "\")"
+    )
     public ResponseEntity<InmuebleDTO> getInmueble(@PathVariable("id") String id) {
         LOG.debug("REST request to get Inmueble : {}", id);
         Optional<InmuebleDTO> inmuebleDTO = inmuebleService.findOne(id);
@@ -178,6 +195,9 @@ public class InmuebleResource {
      * @return the {@link ResponseEntity} with status {@code 204 (NO_CONTENT)}.
      */
     @DeleteMapping("/{id}")
+    @PreAuthorize(
+        "hasAuthority(\"" + AuthoritiesConstants.ADMINISTRADOR_CONJUNTO + "\") or hasAuthority(\"" + AuthoritiesConstants.ADMIN + "\")"
+    )
     public ResponseEntity<Void> deleteInmueble(@PathVariable("id") String id) {
         LOG.debug("REST request to delete Inmueble : {}", id);
         inmuebleService.delete(id);

@@ -1,7 +1,13 @@
 package com.edu.sena.zentry.service.impl;
 
 import com.edu.sena.zentry.domain.Reservas;
+import com.edu.sena.zentry.domain.User;
+import com.edu.sena.zentry.domain.Vinculado;
+import com.edu.sena.zentry.domain.enumeration.Estado;
 import com.edu.sena.zentry.repository.ReservasRepository;
+import com.edu.sena.zentry.repository.UserRepository;
+import com.edu.sena.zentry.repository.VinculadoRepository;
+import com.edu.sena.zentry.security.SecurityUtils;
 import com.edu.sena.zentry.service.ReservasService;
 import com.edu.sena.zentry.service.dto.ReservasDTO;
 import com.edu.sena.zentry.service.mapper.ReservasMapper;
@@ -24,15 +30,34 @@ public class ReservasServiceImpl implements ReservasService {
 
     private final ReservasMapper reservasMapper;
 
-    public ReservasServiceImpl(ReservasRepository reservasRepository, ReservasMapper reservasMapper) {
+    private final VinculadoRepository vinculadoRepository;
+
+    private final UserRepository userRepository;
+
+    public ReservasServiceImpl(
+        ReservasRepository reservasRepository,
+        ReservasMapper reservasMapper,
+        VinculadoRepository vinculadoRepository,
+        UserRepository userRepository
+    ) {
         this.reservasRepository = reservasRepository;
         this.reservasMapper = reservasMapper;
+        this.vinculadoRepository = vinculadoRepository;
+        this.userRepository = userRepository;
     }
 
     @Override
     public ReservasDTO save(ReservasDTO reservasDTO) {
         LOG.debug("Request to save Reservas : {}", reservasDTO);
         Reservas reservas = reservasMapper.toEntity(reservasDTO);
+        reservas.setEstado(Estado.PENDIENTE);
+        String login = SecurityUtils.getCurrentUserLogin().orElseThrow();
+
+        User user = userRepository.findOneByLogin(login).orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+
+        Vinculado vinculado = vinculadoRepository.findOneByUser(user).orElseThrow(() -> new RuntimeException("Vinculado no encontrado"));
+
+        reservas.setVinculado(vinculado);
         reservas = reservasRepository.save(reservas);
         return reservasMapper.toDto(reservas);
     }

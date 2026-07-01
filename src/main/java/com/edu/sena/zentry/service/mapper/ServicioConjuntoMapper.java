@@ -17,6 +17,13 @@ public interface ServicioConjuntoMapper extends EntityMapper<ServicioConjuntoDTO
     @Mapping(target = "servicio", source = "servicio", qualifiedByName = "servicioNombreZonaComun")
     ServicioConjuntoDTO toDto(ServicioConjunto s);
 
+    // NUEVO METODO
+    @Named("servicioConjuntoResumen")
+    @BeanMapping(ignoreByDefault = true)
+    @Mapping(target = "id", source = "id")
+    @Mapping(target = "servicio", source = "servicio", qualifiedByName = "servicioNombreZonaComun")
+    ServicioConjuntoDTO toDtoServicioConjuntoResumen(ServicioConjunto servicioConjunto);
+
     @Named("conjuntoResidencialNombreConjunto")
     @BeanMapping(ignoreByDefault = true)
     @Mapping(target = "id", source = "id")

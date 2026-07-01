@@ -8,7 +8,6 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useAppDispatch, useAppSelector } from 'app/config/store';
 import { getEntities as getAdministradorConjuntos } from 'app/entities/administrador-conjunto/administrador-conjunto.reducer';
 import { getEntities as getTipoDocumentos } from 'app/entities/tipo-documento/tipo-documento.reducer';
-import { getUsers } from 'app/modules/administration/user-management/user-management.reducer';
 
 import { createEntity, getEntity, reset, updateEntity } from './vinculado.reducer';
 
@@ -20,7 +19,6 @@ export const VinculadoUpdate = () => {
   const { id } = useParams<'id'>();
   const isNew = id === undefined;
 
-  const users = useAppSelector(state => state.userManagement.users);
   const tipoDocumentos = useAppSelector(state => state.tipoDocumento.entities);
   const administradorConjuntos = useAppSelector(state => state.administradorConjunto.entities);
   const vinculadoEntity = useAppSelector(state => state.vinculado.entity);
@@ -39,7 +37,6 @@ export const VinculadoUpdate = () => {
       dispatch(getEntity(id));
     }
 
-    dispatch(getUsers({}));
     dispatch(getTipoDocumentos({}));
     dispatch(getAdministradorConjuntos({}));
   }, []);
@@ -54,7 +51,6 @@ export const VinculadoUpdate = () => {
     const entity = {
       ...vinculadoEntity,
       ...values,
-      user: users.find(it => it.id.toString() === values.user?.toString()),
       tipoDocumento: tipoDocumentos.find(it => it.id.toString() === values.tipoDocumento?.toString()),
       administradorConjunto: administradorConjuntos.find(it => it.id.toString() === values.administradorConjunto?.toString()),
     };
@@ -71,7 +67,6 @@ export const VinculadoUpdate = () => {
       ? {}
       : {
           ...vinculadoEntity,
-          user: vinculadoEntity?.user?.id,
           tipoDocumento: vinculadoEntity?.tipoDocumento?.id,
           administradorConjunto: vinculadoEntity?.administradorConjunto?.id,
         };
@@ -146,18 +141,23 @@ export const VinculadoUpdate = () => {
                   maxLength: { value: 100, message: 'Este campo no puede superar más de 100 caracteres.' },
                 }}
               />
+              <ValidatedField
+                label="Usuario Vinculado"
+                name="login"
+                type="text"
+                validate={{
+                  required: { value: true, message: 'Este campo es obligatorio.' },
+                }}
+              />
+              <ValidatedField
+                label="Contraseña Vinculado"
+                name="password"
+                type="password"
+                validate={{
+                  required: { value: true, message: 'Este campo es obligatorio.' },
+                }}
+              />
               <ValidatedField label="Activo" id="vinculado-activo" name="activo" data-cy="activo" check type="checkbox" />
-              <ValidatedField id="vinculado-user" name="user" data-cy="user" label="User" type="select" required>
-                <option value="" key="0" />
-                {users
-                  ? users.map(otherEntity => (
-                      <option value={otherEntity.id} key={otherEntity.id}>
-                        {otherEntity.login}
-                      </option>
-                    ))
-                  : null}
-              </ValidatedField>
-              <FormText>Este campo es obligatorio.</FormText>
               <ValidatedField
                 id="vinculado-tipoDocumento"
                 name="tipoDocumento"

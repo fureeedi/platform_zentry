@@ -8,7 +8,6 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useAppDispatch, useAppSelector } from 'app/config/store';
 import { getEntities as getConjuntoResidencials } from 'app/entities/conjunto-residencial/conjunto-residencial.reducer';
 import { getEntities as getTipoDocumentos } from 'app/entities/tipo-documento/tipo-documento.reducer';
-import { getUsers } from 'app/modules/administration/user-management/user-management.reducer';
 
 import { createEntity, getEntity, reset, updateEntity } from './administrador-conjunto.reducer';
 
@@ -20,7 +19,6 @@ export const AdministradorConjuntoUpdate = () => {
   const { id } = useParams<'id'>();
   const isNew = id === undefined;
 
-  const users = useAppSelector(state => state.userManagement.users);
   const conjuntoResidencials = useAppSelector(state => state.conjuntoResidencial.entities);
   const tipoDocumentos = useAppSelector(state => state.tipoDocumento.entities);
   const administradorConjuntoEntity = useAppSelector(state => state.administradorConjunto.entity);
@@ -39,7 +37,6 @@ export const AdministradorConjuntoUpdate = () => {
       dispatch(getEntity(id));
     }
 
-    dispatch(getUsers({}));
     dispatch(getConjuntoResidencials({}));
     dispatch(getTipoDocumentos({}));
   }, []);
@@ -54,7 +51,6 @@ export const AdministradorConjuntoUpdate = () => {
     const entity = {
       ...administradorConjuntoEntity,
       ...values,
-      user: users.find(it => it.id.toString() === values.user?.toString()),
       conjuntoResidencial: conjuntoResidencials.find(it => it.id.toString() === values.conjuntoResidencial?.toString()),
       tipoDocumento: tipoDocumentos.find(it => it.id.toString() === values.tipoDocumento?.toString()),
     };
@@ -71,7 +67,6 @@ export const AdministradorConjuntoUpdate = () => {
       ? {}
       : {
           ...administradorConjuntoEntity,
-          user: administradorConjuntoEntity?.user?.id,
           conjuntoResidencial: administradorConjuntoEntity?.conjuntoResidencial?.id,
           tipoDocumento: administradorConjuntoEntity?.tipoDocumento?.id,
         };
@@ -147,18 +142,27 @@ export const AdministradorConjuntoUpdate = () => {
                   required: { value: true, message: 'Este campo es obligatorio.' },
                 }}
               />
+              <ValidatedField
+                label="Usuario"
+                id="administrador-conjunto-login"
+                name="login"
+                data-cy="login"
+                type="text"
+                validate={{
+                  required: { value: true, message: 'Este campo es obligatorio.' },
+                }}
+              />
+              <ValidatedField
+                label="Contraseña"
+                id="administrador-conjunto-password"
+                name="password"
+                data-cy="password"
+                type="password"
+                validate={{
+                  required: { value: true, message: 'Este campo es obligatorio.' },
+                }}
+              />
               <ValidatedField label="Activo" id="administrador-conjunto-activo" name="activo" data-cy="activo" check type="checkbox" />
-              <ValidatedField id="administrador-conjunto-user" name="user" data-cy="user" label="User" type="select" required>
-                <option value="" key="0" />
-                {users
-                  ? users.map(otherEntity => (
-                      <option value={otherEntity.id} key={otherEntity.id}>
-                        {otherEntity.login}
-                      </option>
-                    ))
-                  : null}
-              </ValidatedField>
-              <FormText>Este campo es obligatorio.</FormText>
               <ValidatedField
                 id="administrador-conjunto-conjuntoResidencial"
                 name="conjuntoResidencial"

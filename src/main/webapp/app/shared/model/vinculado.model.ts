@@ -1,6 +1,5 @@
 import { IAdministradorConjunto } from 'app/shared/model/administrador-conjunto.model';
 import { ITipoDocumento } from 'app/shared/model/tipo-documento.model';
-import { IUser } from 'app/shared/model/user.model';
 
 export interface IVinculado {
   id?: string;
@@ -10,9 +9,10 @@ export interface IVinculado {
   telefono?: string | null;
   correo?: string;
   activo?: boolean;
-  user?: IUser;
   tipoDocumento?: ITipoDocumento;
   administradorConjunto?: IAdministradorConjunto;
+  login?: string;
+  password?: string;
 }
 
 export const defaultValue: Readonly<IVinculado> = {

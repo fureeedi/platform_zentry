@@ -8,6 +8,8 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 import { APP_LOCAL_DATE_FORMAT } from 'app/config/constants';
 import { useAppDispatch, useAppSelector } from 'app/config/store';
+import { Authority } from 'app/shared/jhipster/constants';
+import { hasAnyAuthority } from 'app/shared/auth/private-route';
 import { overridePaginationStateWithQueryParams } from 'app/shared/util/entity-utils';
 import { ASC, DESC, ITEMS_PER_PAGE, SORT } from 'app/shared/util/pagination.constants';
 
@@ -26,6 +28,11 @@ export const Reservas = () => {
   const reservasList = useAppSelector(state => state.reservas.entities);
   const loading = useAppSelector(state => state.reservas.loading);
   const totalItems = useAppSelector(state => state.reservas.totalItems);
+  const account = useAppSelector(state => state.authentication.account);
+
+  const isAdmin = hasAnyAuthority(account.authorities, [Authority.ADMIN]);
+  const isAdministradorConjunto = hasAnyAuthority(account.authorities, [Authority.ADMINISTRADOR_CONJUNTO]);
+  const isCliente = hasAnyAuthority(account.authorities, [Authority.CLIENTE]);
 
   const getAllEntities = () => {
     dispatch(
@@ -96,13 +103,17 @@ export const Reservas = () => {
       <h2 id="reservas-heading" data-cy="ReservasHeading">
         Reservas
         <div className="d-flex justify-content-end">
-          <Button className="me-2" variant="info" onClick={handleSyncList} disabled={loading}>
-            <FontAwesomeIcon icon="sync" spin={loading} /> Refrescar lista
-          </Button>
-          <Link to="/reservas/new" className="btn btn-primary jh-create-entity" id="jh-create-entity" data-cy="entityCreateButton">
-            <FontAwesomeIcon icon="plus" />
-            &nbsp; Crear nuevo Reservas
-          </Link>
+          {isAdministradorConjunto && (
+            <Button className="me-2" variant="info" onClick={handleSyncList} disabled={loading}>
+              <FontAwesomeIcon icon="sync" spin={loading} /> Refrescar lista
+            </Button>
+          )}
+          {isCliente && (
+            <Link to="/reservas/new" className="btn btn-primary jh-create-entity" id="jh-create-entity" data-cy="entityCreateButton">
+              <FontAwesomeIcon icon="plus" />
+              &nbsp; Crear una Reserva
+            </Link>
+          )}
         </div>
       </h2>
       <div className="table-responsive">
@@ -110,9 +121,11 @@ export const Reservas = () => {
           <Table responsive>
             <thead>
               <tr>
-                <th className="hand" onClick={sort('id')}>
-                  ID <FontAwesomeIcon icon={getSortIconByFieldName('id')} />
-                </th>
+                {isAdmin && (
+                  <th className="hand" onClick={sort('id')}>
+                    ID <FontAwesomeIcon icon={getSortIconByFieldName('id')} />
+                  </th>
+                )}
                 <th className="hand" onClick={sort('fechaSolicitud')}>
                   Fecha Solicitud <FontAwesomeIcon icon={getSortIconByFieldName('fechaSolicitud')} />
                 </th>
@@ -134,20 +147,24 @@ export const Reservas = () => {
                 <th>
                   Servicio Conjunto <FontAwesomeIcon icon="sort" />
                 </th>
-                <th>
-                  Vinculado <FontAwesomeIcon icon="sort" />
-                </th>
+                {isAdministradorConjunto && (
+                  <th>
+                    Vinculado <FontAwesomeIcon icon="sort" />
+                  </th>
+                )}
                 <th />
               </tr>
             </thead>
             <tbody>
               {reservasList.map(reservas => (
                 <tr key={`entity-${reservas.id}`} data-cy="entityTable">
-                  <td>
-                    <Button as={Link as any} to={`/reservas/${reservas.id}`} variant="link" size="sm">
-                      {reservas.id}
-                    </Button>
-                  </td>
+                  {isAdmin && (
+                    <td>
+                      <Button as={Link as any} to={`/reservas/${reservas.id}`} variant="link" size="sm">
+                        {reservas.id}
+                      </Button>
+                    </td>
+                  )}
                   <td>
                     {reservas.fechaSolicitud ? (
                       <TextFormat type="date" value={reservas.fechaSolicitud} format={APP_LOCAL_DATE_FORMAT} />
@@ -162,38 +179,52 @@ export const Reservas = () => {
                   <td>{reservas.estado}</td>
                   <td>
                     {reservas.servicioConjunto ? (
-                      <Link to={`/servicio-conjunto/${reservas.servicioConjunto.id}`}>{reservas.servicioConjunto.id}</Link>
+                      <Link to={`/servicio-conjunto/${reservas.servicioConjunto.id}`}>
+                        {reservas.servicioConjunto.servicio?.nombreZonaComun}
+                      </Link>
                     ) : (
                       ''
                     )}
                   </td>
-                  <td>
-                    {reservas.vinculado ? <Link to={`/vinculado/${reservas.vinculado.id}`}>{reservas.vinculado.numeroDocumento}</Link> : ''}
-                  </td>
+                  {isAdministradorConjunto && (
+                    <td>
+                      {reservas.vinculado ? (
+                        <Link to={`/vinculado/${reservas.vinculado.id}`}>
+                          {`${reservas.vinculado.nombres} ${reservas.vinculado.apellidos} - ${reservas.vinculado.numeroDocumento}`}
+                        </Link>
+                      ) : (
+                        ''
+                      )}
+                    </td>
+                  )}
                   <td className="text-end">
                     <div className="btn-group flex-btn-group-container">
                       <Button as={Link as any} to={`/reservas/${reservas.id}`} variant="info" size="sm" data-cy="entityDetailsButton">
                         <FontAwesomeIcon icon="eye" /> <span className="d-none d-md-inline">Vista</span>
                       </Button>
-                      <Button
-                        as={Link as any}
-                        to={`/reservas/${reservas.id}/edit?page=${paginationState.activePage}&sort=${paginationState.sort},${paginationState.order}`}
-                        variant="primary"
-                        size="sm"
-                        data-cy="entityEditButton"
-                      >
-                        <FontAwesomeIcon icon="pencil-alt" /> <span className="d-none d-md-inline">Editar</span>
-                      </Button>
-                      <Button
-                        onClick={() =>
-                          (window.location.href = `/reservas/${reservas.id}/delete?page=${paginationState.activePage}&sort=${paginationState.sort},${paginationState.order}`)
-                        }
-                        variant="danger"
-                        size="sm"
-                        data-cy="entityDeleteButton"
-                      >
-                        <FontAwesomeIcon icon="trash" /> <span className="d-none d-md-inline">Eliminar</span>
-                      </Button>
+                      {isAdministradorConjunto && (
+                        <>
+                          <Button
+                            as={Link as any}
+                            to={`/reservas/${reservas.id}/edit?page=${paginationState.activePage}&sort=${paginationState.sort},${paginationState.order}`}
+                            variant="primary"
+                            size="sm"
+                            data-cy="entityEditButton"
+                          >
+                            <FontAwesomeIcon icon="pencil-alt" /> <span className="d-none d-md-inline">Editar</span>
+                          </Button>
+                          <Button
+                            onClick={() =>
+                              (window.location.href = `/reservas/${reservas.id}/delete?page=${paginationState.activePage}&sort=${paginationState.sort},${paginationState.order}`)
+                            }
+                            variant="danger"
+                            size="sm"
+                            data-cy="entityDeleteButton"
+                          >
+                            <FontAwesomeIcon icon="trash" /> <span className="d-none d-md-inline">Eliminar</span>
+                          </Button>
+                        </>
+                      )}
                     </div>
                   </td>
                 </tr>

@@ -9,6 +9,8 @@ import { APP_LOCAL_DATE_FORMAT } from 'app/config/constants';
 import { useAppDispatch, useAppSelector } from 'app/config/store';
 
 import { getEntity } from './reservas.reducer';
+import { hasAnyAuthority } from 'app/shared/auth/private-route';
+import { Authority } from 'app/shared/jhipster/constants';
 
 export const ReservasDetail = () => {
   const dispatch = useAppDispatch();
@@ -20,15 +22,20 @@ export const ReservasDetail = () => {
   }, []);
 
   const reservasEntity = useAppSelector(state => state.reservas.entity);
+  const isAdmin = useAppSelector(state => hasAnyAuthority(state.authentication.account.authorities, [Authority.ADMIN]));
   return (
     <Row>
       <Col md="8">
         <h2 data-cy="reservasDetailsHeading">Reservas</h2>
         <dl className="jh-entity-details">
-          <dt>
-            <span id="id">ID</span>
-          </dt>
-          <dd>{reservasEntity.id}</dd>
+          {isAdmin && (
+            <>
+              <dt>
+                <span id="id">ID</span>
+              </dt>
+              <dd>{reservasEntity.id}</dd>
+            </>
+          )}
           <dt>
             <span id="fechaSolicitud">Fecha Solicitud</span>
           </dt>
@@ -62,9 +69,13 @@ export const ReservasDetail = () => {
           </dt>
           <dd>{reservasEntity.estado}</dd>
           <dt>Servicio Conjunto</dt>
-          <dd>{reservasEntity.servicioConjunto ? reservasEntity.servicioConjunto.id : ''}</dd>
+          <dd>{reservasEntity.servicioConjunto?.servicio?.nombreZonaComun}</dd>
           <dt>Vinculado</dt>
-          <dd>{reservasEntity.vinculado ? reservasEntity.vinculado.numeroDocumento : ''}</dd>
+          <dd>
+            {reservasEntity.vinculado
+              ? `${reservasEntity.vinculado.nombres} ${reservasEntity.vinculado.apellidos} - ${reservasEntity.vinculado.numeroDocumento}`
+              : ''}
+          </dd>
         </dl>
         <Button as={Link as any} to="/reservas" replace variant="info" data-cy="entityDetailsBackButton">
           <FontAwesomeIcon icon="arrow-left" /> <span className="d-none d-md-inline">Volver</span>
