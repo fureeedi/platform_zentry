@@ -1,7 +1,10 @@
 package com.edu.sena.zentry.service.impl;
 
-import com.edu.sena.zentry.domain.FacturaDePago;
+import com.edu.sena.zentry.domain.*;
 import com.edu.sena.zentry.repository.FacturaDePagoRepository;
+import com.edu.sena.zentry.repository.UserRepository;
+import com.edu.sena.zentry.repository.VinculadoRepository;
+import com.edu.sena.zentry.security.SecurityUtils;
 import com.edu.sena.zentry.service.FacturaDePagoService;
 import com.edu.sena.zentry.service.dto.FacturaDePagoDTO;
 import com.edu.sena.zentry.service.mapper.FacturaDePagoMapper;
@@ -24,15 +27,39 @@ public class FacturaDePagoServiceImpl implements FacturaDePagoService {
 
     private final FacturaDePagoMapper facturaDePagoMapper;
 
-    public FacturaDePagoServiceImpl(FacturaDePagoRepository facturaDePagoRepository, FacturaDePagoMapper facturaDePagoMapper) {
+    private final VinculadoRepository vinculadoRepository;
+
+    private final UserRepository userRepository;
+
+    public FacturaDePagoServiceImpl(
+        FacturaDePagoRepository facturaDePagoRepository,
+        FacturaDePagoMapper facturaDePagoMapper,
+        VinculadoRepository vinculadoRepository,
+        UserRepository userRepository
+    ) {
         this.facturaDePagoRepository = facturaDePagoRepository;
         this.facturaDePagoMapper = facturaDePagoMapper;
+        this.vinculadoRepository = vinculadoRepository;
+        this.userRepository = userRepository;
     }
 
     @Override
     public FacturaDePagoDTO save(FacturaDePagoDTO facturaDePagoDTO) {
         LOG.debug("Request to save FacturaDePago : {}", facturaDePagoDTO);
         FacturaDePago facturaDePago = facturaDePagoMapper.toEntity(facturaDePagoDTO);
+        String login = SecurityUtils.getCurrentUserLogin().orElseThrow();
+
+        // Recupera el usuario que inició sesión
+        User user = userRepository.findOneByLogin(login).orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+
+        // Obtiene la información del vinculado relacionada con ese usuario
+        Vinculado vinculado = vinculadoRepository.findOneByUser(user).orElseThrow(() -> new RuntimeException("Vinculado no encontrado"));
+
+        // // Obtiene el conjunto residencial del administrador del vinculado
+        ConjuntoResidencial conjuntoResidencial = vinculado.getAdministradorConjunto().getConjuntoResidencial();
+
+        facturaDePago.setVinculado(vinculado);
+        facturaDePago.conjuntoResidencial(conjuntoResidencial);
         facturaDePago = facturaDePagoRepository.save(facturaDePago);
         return facturaDePagoMapper.toDto(facturaDePago);
     }

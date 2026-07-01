@@ -1,5 +1,6 @@
 package com.edu.sena.zentry.repository;
 
+import com.edu.sena.zentry.domain.User;
 import com.edu.sena.zentry.domain.Vinculado;
 import java.util.List;
 import java.util.Optional;
@@ -22,4 +23,6 @@ public interface VinculadoRepository extends MongoRepository<Vinculado, String> 
 
     @Query("{'id': ?0}")
     Optional<Vinculado> findOneWithEagerRelationships(String id);
+
+    Optional<Vinculado> findOneByUser(User user);
 }

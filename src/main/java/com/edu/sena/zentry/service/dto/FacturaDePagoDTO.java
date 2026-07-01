@@ -20,10 +20,10 @@ public class FacturaDePagoDTO implements Serializable {
 
     private String imagenFacturaContentType;
 
-    @NotNull
+    // Se quita @NotNull
     private ConjuntoResidencialDTO conjuntoResidencial;
 
-    @NotNull
+    //se quita @NotNull
     private VinculadoDTO vinculado;
 
     public String getId() {
