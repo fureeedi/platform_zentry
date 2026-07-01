@@ -7,6 +7,8 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 import { APP_LOCAL_DATE_FORMAT } from 'app/config/constants';
 import { useAppDispatch, useAppSelector } from 'app/config/store';
+import { hasAnyAuthority } from 'app/shared/auth/private-route';
+import { Authority } from 'app/shared/jhipster/constants';
 
 import { getEntity } from './factura-de-pago.reducer';
 
@@ -14,6 +16,11 @@ export const FacturaDePagoDetail = () => {
   const dispatch = useAppDispatch();
 
   const { id } = useParams<'id'>();
+
+  const isAdmin = useAppSelector(state => hasAnyAuthority(state.authentication.account.authorities, [Authority.ADMIN]));
+  const isAdministradorConjunto = useAppSelector(state =>
+    hasAnyAuthority(state.authentication.account.authorities, [Authority.ADMINISTRADOR_CONJUNTO]),
+  );
 
   useEffect(() => {
     dispatch(getEntity(id));
@@ -25,10 +32,14 @@ export const FacturaDePagoDetail = () => {
       <Col md="8">
         <h2 data-cy="facturaDePagoDetailsHeading">Factura De Pago</h2>
         <dl className="jh-entity-details">
-          <dt>
-            <span id="id">ID</span>
-          </dt>
-          <dd>{facturaDePagoEntity.id}</dd>
+          {isAdmin && (
+            <>
+              <dt>
+                <span id="id">ID</span>
+              </dt>
+              <dd>{facturaDePagoEntity.id}</dd>
+            </>
+          )}
           <dt>
             <span id="fechaEnvio">Fecha Envio</span>
           </dt>
@@ -59,16 +70,26 @@ export const FacturaDePagoDetail = () => {
           </dd>
           <dt>Conjunto Residencial</dt>
           <dd>{facturaDePagoEntity.conjuntoResidencial ? facturaDePagoEntity.conjuntoResidencial.nombreConjunto : ''}</dd>
-          <dt>Vinculado</dt>
-          <dd>{facturaDePagoEntity.vinculado ? facturaDePagoEntity.vinculado.numeroDocumento : ''}</dd>
+          {isAdministradorConjunto && (
+            <>
+              <dt>Vinculado</dt>
+              <dd>
+                {facturaDePagoEntity.vinculado
+                  ? `${facturaDePagoEntity.vinculado.nombres} - ${facturaDePagoEntity.vinculado.apellidos} - ${facturaDePagoEntity.vinculado.numeroDocumento}`
+                  : ''}
+              </dd>
+            </>
+          )}
         </dl>
         <Button as={Link as any} to="/factura-de-pago" replace variant="info" data-cy="entityDetailsBackButton">
           <FontAwesomeIcon icon="arrow-left" /> <span className="d-none d-md-inline">Volver</span>
         </Button>
         &nbsp;
-        <Button as={Link as any} to={`/factura-de-pago/${facturaDePagoEntity.id}/edit`} replace variant="primary">
-          <FontAwesomeIcon icon="pencil-alt" /> <span className="d-none d-md-inline">Editar</span>
-        </Button>
+        {isAdmin && (
+          <Button as={Link as any} to={`/factura-de-pago/${facturaDePagoEntity.id}/edit`} replace variant="primary">
+            <FontAwesomeIcon icon="pencil-alt" /> <span className="d-none d-md-inline">Editar</span>
+          </Button>
+        )}
       </Col>
     </Row>
   );

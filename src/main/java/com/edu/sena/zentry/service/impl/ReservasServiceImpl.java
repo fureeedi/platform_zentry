@@ -53,8 +53,10 @@ public class ReservasServiceImpl implements ReservasService {
         reservas.setEstado(Estado.PENDIENTE);
         String login = SecurityUtils.getCurrentUserLogin().orElseThrow();
 
+        // Recupera el usuario que inició sesión
         User user = userRepository.findOneByLogin(login).orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
 
+        // Recupera el usuario que inició sesión
         Vinculado vinculado = vinculadoRepository.findOneByUser(user).orElseThrow(() -> new RuntimeException("Vinculado no encontrado"));
 
         reservas.setVinculado(vinculado);

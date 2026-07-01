@@ -169,22 +169,44 @@ export const UserManagement = () => {
               </td>
               <td className="text-end">
                 <div className="btn-group flex-btn-group-container">
-                  <Button as={Link as any} to={user.login} variant="info" size="sm" data-cy="entityDetailsButton">
-                    <FontAwesomeIcon icon={faEye} /> <span className="d-none d-md-inline">Vista</span>
-                  </Button>
-                  <Button as={Link as any} to={`${user.login}/edit`} variant="primary" size="sm" data-cy="entityEditButton">
-                    <FontAwesomeIcon icon={faPencilAlt} /> <span className="d-none d-md-inline">Editar</span>
-                  </Button>
-                  <Button
-                    as={Link as any}
-                    to={`${user.login}/delete`}
-                    variant="danger"
-                    size="sm"
-                    disabled={account.login === user.login}
-                    data-cy="entityDeleteButton"
-                  >
-                    <FontAwesomeIcon icon={faTrash} /> <span className="d-none d-md-inline">Eliminar</span>
-                  </Button>
+                  <td className="text-end">
+                    <div className="d-flex justify-content-end gap-2">
+                      <Button
+                        as={Link as any}
+                        to={user.login}
+                        size="sm"
+                        data-cy="entityDetailsButton"
+                        className="text-white border-secondary border-opacity-25 px-3 py-2 d-inline-flex align-items-center gap-1"
+                        style={{ backgroundColor: 'rgba(255, 255, 255, 0.05)' }}
+                      >
+                        <FontAwesomeIcon icon={faEye} />
+                        <span className="d-none d-md-inline ms-1">Vista</span>
+                      </Button>
+                      <Button
+                        as={Link as any}
+                        to={`${user.login}/edit`}
+                        size="sm"
+                        data-cy="entityEditButton"
+                        className="text-white border-0 px-3 py-2 d-inline-flex align-items-center gap-1"
+                        style={{ backgroundColor: '#2b7fa2' }}
+                      >
+                        <FontAwesomeIcon icon={faPencilAlt} />
+                        <span className="d-none d-md-inline ms-1">Editar</span>
+                      </Button>
+                      <Button
+                        as={Link as any}
+                        to={`${user.login}/delete`}
+                        size="sm"
+                        disabled={account.login === user.login}
+                        data-cy="entityDeleteButton"
+                        className="text-white border-0 px-3 py-2 d-inline-flex align-items-center gap-1"
+                        style={{ backgroundColor: '#dc3545' }}
+                      >
+                        <FontAwesomeIcon icon={faTrash} />
+                        <span className="d-none d-md-inline ms-1">Eliminar</span>
+                      </Button>
+                    </div>
+                  </td>
                 </div>
               </td>
             </tr>
