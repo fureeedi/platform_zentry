@@ -8,6 +8,8 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 import { APP_LOCAL_DATE_FORMAT } from 'app/config/constants';
 import { useAppDispatch, useAppSelector } from 'app/config/store';
+import { hasAnyAuthority } from 'app/shared/auth/private-route';
+import { Authority } from 'app/shared/jhipster/constants';
 import { overridePaginationStateWithQueryParams } from 'app/shared/util/entity-utils';
 import { ASC, DESC, ITEMS_PER_PAGE, SORT } from 'app/shared/util/pagination.constants';
 
@@ -26,6 +28,11 @@ export const FacturaDePago = () => {
   const facturaDePagoList = useAppSelector(state => state.facturaDePago.entities);
   const loading = useAppSelector(state => state.facturaDePago.loading);
   const totalItems = useAppSelector(state => state.facturaDePago.totalItems);
+  const isAdmin = useAppSelector(state => hasAnyAuthority(state.authentication.account.authorities, [Authority.ADMIN]));
+  const isAdministradorConjunto = useAppSelector(state =>
+    hasAnyAuthority(state.authentication.account.authorities, [Authority.ADMINISTRADOR_CONJUNTO]),
+  );
+  const isCliente = useAppSelector(state => hasAnyAuthority(state.authentication.account.authorities, [Authority.CLIENTE]));
 
   const getAllEntities = () => {
     dispatch(
@@ -96,13 +103,17 @@ export const FacturaDePago = () => {
       <h2 id="factura-de-pago-heading" data-cy="FacturaDePagoHeading">
         Factura De Pagos
         <div className="d-flex justify-content-end">
-          <Button className="me-2" variant="info" onClick={handleSyncList} disabled={loading}>
-            <FontAwesomeIcon icon="sync" spin={loading} /> Refrescar lista
-          </Button>
-          <Link to="/factura-de-pago/new" className="btn btn-primary jh-create-entity" id="jh-create-entity" data-cy="entityCreateButton">
-            <FontAwesomeIcon icon="plus" />
-            &nbsp; Crear nuevo Factura De Pago
-          </Link>
+          {isAdministradorConjunto && (
+            <Button className="me-2" variant="info" onClick={handleSyncList} disabled={loading}>
+              <FontAwesomeIcon icon="sync" spin={loading} /> Refrescar lista
+            </Button>
+          )}
+          {isCliente && (
+            <Link to="/factura-de-pago/new" className="btn btn-primary jh-create-entity" id="jh-create-entity" data-cy="entityCreateButton">
+              <FontAwesomeIcon icon="plus" />
+              &nbsp; Crear nuevo Factura De Pago
+            </Link>
+          )}
         </div>
       </h2>
       <div className="table-responsive">
@@ -110,9 +121,11 @@ export const FacturaDePago = () => {
           <Table responsive>
             <thead>
               <tr>
-                <th className="hand" onClick={sort('id')}>
-                  ID <FontAwesomeIcon icon={getSortIconByFieldName('id')} />
-                </th>
+                {isAdmin && (
+                  <th className="hand" onClick={sort('id')}>
+                    ID <FontAwesomeIcon icon={getSortIconByFieldName('id')} />
+                  </th>
+                )}
                 <th className="hand" onClick={sort('fechaEnvio')}>
                   Fecha Envio <FontAwesomeIcon icon={getSortIconByFieldName('fechaEnvio')} />
                 </th>
@@ -122,20 +135,24 @@ export const FacturaDePago = () => {
                 <th>
                   Conjunto Residencial <FontAwesomeIcon icon="sort" />
                 </th>
-                <th>
-                  Vinculado <FontAwesomeIcon icon="sort" />
-                </th>
+                {isAdministradorConjunto && (
+                  <th>
+                    Vinculado <FontAwesomeIcon icon="sort" />
+                  </th>
+                )}
                 <th />
               </tr>
             </thead>
             <tbody>
               {facturaDePagoList.map(facturaDePago => (
                 <tr key={`entity-${facturaDePago.id}`} data-cy="entityTable">
-                  <td>
-                    <Button as={Link as any} to={`/factura-de-pago/${facturaDePago.id}`} variant="link" size="sm">
-                      {facturaDePago.id}
-                    </Button>
-                  </td>
+                  {isAdmin && (
+                    <td>
+                      <Button as={Link as any} to={`/factura-de-pago/${facturaDePago.id}`} variant="link" size="sm">
+                        {facturaDePago.id}
+                      </Button>
+                    </td>
+                  )}
                   <td>
                     {facturaDePago.fechaEnvio ? (
                       <TextFormat type="date" value={facturaDePago.fechaEnvio} format={APP_LOCAL_DATE_FORMAT} />
@@ -168,13 +185,17 @@ export const FacturaDePago = () => {
                       ''
                     )}
                   </td>
-                  <td>
-                    {facturaDePago.vinculado ? (
-                      <Link to={`/vinculado/${facturaDePago.vinculado.id}`}>{facturaDePago.vinculado.numeroDocumento}</Link>
-                    ) : (
-                      ''
-                    )}
-                  </td>
+                  {isAdministradorConjunto && (
+                    <td>
+                      {facturaDePago.vinculado ? (
+                        <Link to={`/vinculado/${facturaDePago.vinculado.id}`}>
+                          {`${facturaDePago.vinculado.nombres} - ${facturaDePago.vinculado.apellidos} - ${facturaDePago.vinculado.numeroDocumento}`}
+                        </Link>
+                      ) : (
+                        ''
+                      )}
+                    </td>
+                  )}
                   <td className="text-end">
                     <div className="btn-group flex-btn-group-container">
                       <Button
@@ -186,25 +207,29 @@ export const FacturaDePago = () => {
                       >
                         <FontAwesomeIcon icon="eye" /> <span className="d-none d-md-inline">Vista</span>
                       </Button>
-                      <Button
-                        as={Link as any}
-                        to={`/factura-de-pago/${facturaDePago.id}/edit?page=${paginationState.activePage}&sort=${paginationState.sort},${paginationState.order}`}
-                        variant="primary"
-                        size="sm"
-                        data-cy="entityEditButton"
-                      >
-                        <FontAwesomeIcon icon="pencil-alt" /> <span className="d-none d-md-inline">Editar</span>
-                      </Button>
-                      <Button
-                        onClick={() =>
-                          (window.location.href = `/factura-de-pago/${facturaDePago.id}/delete?page=${paginationState.activePage}&sort=${paginationState.sort},${paginationState.order}`)
-                        }
-                        variant="danger"
-                        size="sm"
-                        data-cy="entityDeleteButton"
-                      >
-                        <FontAwesomeIcon icon="trash" /> <span className="d-none d-md-inline">Eliminar</span>
-                      </Button>
+                      {isAdmin && (
+                        <Button
+                          as={Link as any}
+                          to={`/factura-de-pago/${facturaDePago.id}/edit?page=${paginationState.activePage}&sort=${paginationState.sort},${paginationState.order}`}
+                          variant="primary"
+                          size="sm"
+                          data-cy="entityEditButton"
+                        >
+                          <FontAwesomeIcon icon="pencil-alt" /> <span className="d-none d-md-inline">Editar</span>
+                        </Button>
+                      )}
+                      {isAdministradorConjunto && (
+                        <Button
+                          onClick={() =>
+                            (window.location.href = `/factura-de-pago/${facturaDePago.id}/delete?page=${paginationState.activePage}&sort=${paginationState.sort},${paginationState.order}`)
+                          }
+                          variant="danger"
+                          size="sm"
+                          data-cy="entityDeleteButton"
+                        >
+                          <FontAwesomeIcon icon="trash" /> <span className="d-none d-md-inline">Eliminar</span>
+                        </Button>
+                      )}
                     </div>
                   </td>
                 </tr>
