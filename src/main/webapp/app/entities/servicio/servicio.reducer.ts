@@ -28,6 +28,14 @@ export const getEntities = createAsyncThunk(
   { serializeError: serializeAxiosError },
 );
 
+export const getMisServicios = createAsyncThunk(
+  'servicio/fetch_mis_servicios',
+  async () => {
+    return axios.get<IServicio[]>(`${apiUrl}/mis-servicios`);
+  },
+  { serializeError: serializeAxiosError },
+);
+
 export const getEntity = createAsyncThunk(
   'servicio/fetch_entity',
   async (id: string | number) => {
@@ -61,7 +69,7 @@ export const partialUpdateEntity = createAsyncThunk(
   'servicio/partial_update_entity',
   async (entity: IServicio, thunkAPI) => {
     const result = await axios.patch<IServicio>(`${apiUrl}/${entity.id}`, cleanEntity(entity));
-    thunkAPI.dispatch(getEntities({}));
+    thunkAPI.dispatch(getMisServicios());
     return result;
   },
   { serializeError: serializeAxiosError },
@@ -94,14 +102,14 @@ export const ServicioSlice = createEntitySlice({
         state.updateSuccess = true;
         state.entity = {};
       })
-      .addMatcher(isFulfilled(getEntities), (state, action) => {
+      .addMatcher(isFulfilled(getEntities, getMisServicios), (state, action) => {
         const { data, headers } = action.payload;
 
         return {
           ...state,
           loading: false,
           entities: data,
-          totalItems: parseInt(headers['x-total-count'], 10),
+          totalItems: headers['x-total-count'] ? parseInt(headers['x-total-count'], 10) : data.length,
         };
       })
       .addMatcher(isFulfilled(createEntity, updateEntity, partialUpdateEntity), (state, action) => {
@@ -110,7 +118,7 @@ export const ServicioSlice = createEntitySlice({
         state.updateSuccess = true;
         state.entity = action.payload.data;
       })
-      .addMatcher(isPending(getEntities, getEntity), state => {
+      .addMatcher(isPending(getEntities, getEntity, getMisServicios), state => {
         state.errorMessage = null;
         state.updateSuccess = false;
         state.loading = true;

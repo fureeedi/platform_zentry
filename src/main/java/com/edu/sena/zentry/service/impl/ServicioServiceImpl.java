@@ -1,10 +1,17 @@
 package com.edu.sena.zentry.service.impl;
 
+import com.edu.sena.zentry.domain.AdministradorConjunto;
 import com.edu.sena.zentry.domain.Servicio;
+import com.edu.sena.zentry.domain.User;
+import com.edu.sena.zentry.repository.AdministradorConjuntoRepository;
 import com.edu.sena.zentry.repository.ServicioRepository;
+import com.edu.sena.zentry.repository.UserRepository;
+import com.edu.sena.zentry.security.SecurityUtils;
 import com.edu.sena.zentry.service.ServicioService;
 import com.edu.sena.zentry.service.dto.ServicioDTO;
+import com.edu.sena.zentry.service.mapper.AdministradorConjuntoMapper;
 import com.edu.sena.zentry.service.mapper.ServicioMapper;
+import java.util.List;
 import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,17 +31,60 @@ public class ServicioServiceImpl implements ServicioService {
 
     private final ServicioMapper servicioMapper;
 
-    public ServicioServiceImpl(ServicioRepository servicioRepository, ServicioMapper servicioMapper) {
+    private final AdministradorConjuntoRepository administradorConjuntoRepository;
+
+    private final AdministradorConjuntoMapper administradorConjuntoMapper;
+
+    private final UserRepository userRepository;
+
+    public ServicioServiceImpl(
+        ServicioRepository servicioRepository,
+        ServicioMapper servicioMapper,
+        AdministradorConjuntoRepository administradorConjuntoRepository,
+        UserRepository userRepository,
+        AdministradorConjuntoMapper administradorConjuntoMapper
+    ) {
         this.servicioRepository = servicioRepository;
         this.servicioMapper = servicioMapper;
+        this.administradorConjuntoRepository = administradorConjuntoRepository;
+        this.userRepository = userRepository;
+        this.administradorConjuntoMapper = administradorConjuntoMapper;
     }
 
     @Override
     public ServicioDTO save(ServicioDTO servicioDTO) {
         LOG.debug("Request to save Servicio : {}", servicioDTO);
+
+        String login = SecurityUtils.getCurrentUserLogin().orElseThrow();
+
+        User user = userRepository.findOneByLogin(login).orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+
+        AdministradorConjunto administradorConjunto = administradorConjuntoRepository
+            .findOneByUser(user)
+            .orElseThrow(() -> new RuntimeException("Administrador no encontrado"));
+
         Servicio servicio = servicioMapper.toEntity(servicioDTO);
+
+        servicio.setAdministradorConjunto(administradorConjunto);
+
         servicio = servicioRepository.save(servicio);
+
         return servicioMapper.toDto(servicio);
+    }
+
+    @Override
+    public List<ServicioDTO> findMisServicios() {
+        LOG.debug("Request para obtener los servicios del administrador autenticado");
+
+        String login = SecurityUtils.getCurrentUserLogin().orElseThrow();
+
+        User user = userRepository.findOneByLogin(login).orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+
+        AdministradorConjunto administrador = administradorConjuntoRepository
+            .findOneByUser(user)
+            .orElseThrow(() -> new RuntimeException("Administrador no encontrado"));
+
+        return servicioRepository.findByAdministradorConjunto(administrador).stream().map(servicioMapper::toDto).toList();
     }
 
     @Override

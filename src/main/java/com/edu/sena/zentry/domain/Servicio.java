@@ -4,6 +4,7 @@ import jakarta.validation.constraints.*;
 import java.io.Serial;
 import java.io.Serializable;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
 
@@ -33,6 +34,10 @@ public class Servicio implements Serializable {
     @Size(max = 200)
     @Field("descripcion")
     private String descripcion;
+
+    @DBRef
+    @Field("administradorConjunto")
+    private AdministradorConjunto administradorConjunto;
 
     // jhipster-needle-entity-add-field - JHipster will add fields here
 
@@ -86,6 +91,14 @@ public class Servicio implements Serializable {
 
     public void setDescripcion(String descripcion) {
         this.descripcion = descripcion;
+    }
+
+    public AdministradorConjunto getAdministradorConjunto() {
+        return administradorConjunto;
+    }
+
+    public void setAdministradorConjunto(AdministradorConjunto administradorConjunto) {
+        this.administradorConjunto = administradorConjunto;
     }
 
     // jhipster-needle-entity-add-getters-setters - JHipster will add getters and setters here

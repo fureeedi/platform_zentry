@@ -1,6 +1,7 @@
 package com.edu.sena.zentry.repository;
 
 import com.edu.sena.zentry.domain.AdministradorConjunto;
+import com.edu.sena.zentry.domain.User;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.data.domain.Page;
@@ -22,4 +23,6 @@ public interface AdministradorConjuntoRepository extends MongoRepository<Adminis
 
     @Query("{'id': ?0}")
     Optional<AdministradorConjunto> findOneWithEagerRelationships(String id);
+
+    Optional<AdministradorConjunto> findOneByUser(User user);
 }
