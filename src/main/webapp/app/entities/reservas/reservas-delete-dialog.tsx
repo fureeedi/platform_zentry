@@ -44,7 +44,7 @@ export const ReservasDeleteDialog = () => {
       <ModalHeader data-cy="reservasDeleteDialogHeading" closeButton>
         Confirmar operación de borrado
       </ModalHeader>
-      <ModalBody id="zentryApp.reservas.delete.question">¿Seguro que quiere eliminar Reservas {reservasEntity.id}?</ModalBody>
+      <ModalBody id="zentryApp.reservas.delete.question">¿Seguro que quiere eliminar esta reserva?</ModalBody>
       <ModalFooter>
         <Button variant="secondary" onClick={handleClose}>
           <FontAwesomeIcon icon="ban" />

@@ -228,7 +228,7 @@ export const Reservas = () => {
                               )
                             }
                           >
-                            Aprobar
+                            <FontAwesomeIcon icon="check" /> Aprobar
                           </Button>
                           <Button
                             variant="danger"
@@ -243,7 +243,7 @@ export const Reservas = () => {
                               )
                             }
                           >
-                            Rechazar
+                            <FontAwesomeIcon icon="times-circle" /> Rechazar
                           </Button>
                         </>
                       )}
