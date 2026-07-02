@@ -117,4 +117,11 @@ public class ReservasServiceImpl implements ReservasService {
         reservas = reservasRepository.save(reservas);
         return reservasMapper.toDto(reservas);
     }
+
+    @Override
+    public Page<ReservasDTO> buscarPorFiltros(Estado estado, String servicioId, Pageable pageable) {
+        LOG.debug("Request para buscar reservas por filtros");
+
+        return reservasRepository.buscarPorFiltros(estado, servicioId, pageable).map(reservasMapper::toDto);
+    }
 }

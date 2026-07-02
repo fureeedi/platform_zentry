@@ -21,8 +21,32 @@ const apiUrl = 'api/reservas';
 
 export const getEntities = createAsyncThunk(
   'reservas/fetch_entity_list',
-  async ({ page, size, sort }: IQueryParams) => {
-    const requestUrl = `${apiUrl}?${sort ? `page=${page}&size=${size}&sort=${sort}&` : ''}cacheBuster=${Date.now()}`;
+  async ({
+    page,
+    size,
+    sort,
+    estado,
+    servicioId,
+  }: IQueryParams & {
+    estado?: string;
+    servicioId?: string;
+  }) => {
+    let requestUrl = `${apiUrl}?`;
+
+    if (page !== undefined) {
+      requestUrl += `page=${page}&size=${size}&sort=${sort}&`;
+    }
+
+    if (estado) {
+      requestUrl += `estado=${estado}&`;
+    }
+
+    if (servicioId) {
+      requestUrl += `servicioId=${servicioId}&`;
+    }
+
+    requestUrl += `cacheBuster=${Date.now()}`;
+
     return axios.get<IReservas[]>(requestUrl);
   },
   { serializeError: serializeAxiosError },

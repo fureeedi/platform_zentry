@@ -177,15 +177,12 @@ public class ReservasResource {
     )
     public ResponseEntity<List<ReservasDTO>> getAllReservases(
         @org.springdoc.core.annotations.ParameterObject Pageable pageable,
-        @RequestParam(name = "eagerload", required = false, defaultValue = "true") boolean eagerload
+        @RequestParam(required = false) Estado estado,
+        @RequestParam(required = false) String servicioId
     ) {
-        LOG.debug("REST request to get a page of Reservases");
-        Page<ReservasDTO> page;
-        if (eagerload) {
-            page = reservasService.findAllWithEagerRelationships(pageable);
-        } else {
-            page = reservasService.findAll(pageable);
-        }
+        LOG.debug("REST request to retrieve filtered Reservases");
+        Page<ReservasDTO> page = reservasService.buscarPorFiltros(estado, servicioId, pageable);
+
         HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
         return ResponseEntity.ok().headers(headers).body(page.getContent());
     }

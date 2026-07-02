@@ -14,6 +14,7 @@ import { overridePaginationStateWithQueryParams } from 'app/shared/util/entity-u
 import { ASC, DESC, ITEMS_PER_PAGE, SORT } from 'app/shared/util/pagination.constants';
 
 import { getEntities, cambiarEstado } from './reservas.reducer';
+import { getEntities as getServicios } from 'app/entities/servicio-conjunto/servicio-conjunto.reducer';
 
 export const Reservas = () => {
   const dispatch = useAppDispatch();
@@ -25,7 +26,11 @@ export const Reservas = () => {
     overridePaginationStateWithQueryParams(getPaginationState(pageLocation, ITEMS_PER_PAGE, 'id'), pageLocation.search),
   );
 
+  const [estadoFiltro, setEstadoFiltro] = useState('');
+  const [servicioFiltro, setServicioFiltro] = useState('');
+
   const reservasList = useAppSelector(state => state.reservas.entities);
+  const servicios = useAppSelector(state => state.servicioConjunto.entities);
   const loading = useAppSelector(state => state.reservas.loading);
   const totalItems = useAppSelector(state => state.reservas.totalItems);
   const account = useAppSelector(state => state.authentication.account);
@@ -34,7 +39,7 @@ export const Reservas = () => {
   const isAdministradorConjunto = hasAnyAuthority(account.authorities, [Authority.ADMINISTRADOR_CONJUNTO]);
   const isCliente = hasAnyAuthority(account.authorities, [Authority.CLIENTE]);
 
-  const getAllEntities = () => {
+  /* const getAllEntities = () => {
     dispatch(
       getEntities({
         page: paginationState.activePage - 1,
@@ -42,11 +47,24 @@ export const Reservas = () => {
         sort: `${paginationState.sort},${paginationState.order}`,
       }),
     );
-  };
+  }; */
 
   const sortEntities = () => {
-    getAllEntities();
-    const endURL = `?page=${paginationState.activePage}&sort=${paginationState.sort},${paginationState.order}`;
+    dispatch(
+      getEntities({
+        page: paginationState.activePage - 1,
+        size: paginationState.itemsPerPage,
+        sort: `${paginationState.sort},${paginationState.order}`,
+        estado: estadoFiltro,
+        servicioId: servicioFiltro,
+      }),
+    );
+    const endURL =
+      `?page=${paginationState.activePage}` +
+      `&sort=${paginationState.sort},${paginationState.order}` +
+      `&estado=${estadoFiltro}` +
+      `&servicioId=${servicioFiltro}`;
+
     if (pageLocation.search !== endURL) {
       navigate(`${pageLocation.pathname}${endURL}`);
     }
@@ -54,7 +72,17 @@ export const Reservas = () => {
 
   useEffect(() => {
     sortEntities();
-  }, [paginationState.activePage, paginationState.order, paginationState.sort]);
+  }, [paginationState.activePage, paginationState.order, paginationState.sort, estadoFiltro, servicioFiltro]);
+
+  useEffect(() => {
+    dispatch(
+      getServicios({
+        page: 0,
+        size: 100,
+        sort: 'id,asc',
+      }),
+    );
+  }, []);
 
   useEffect(() => {
     const params = new URLSearchParams(pageLocation.search);
@@ -116,6 +144,40 @@ export const Reservas = () => {
           )}
         </div>
       </h2>
+      {isAdministradorConjunto && (
+        <>
+          <div className="card mb-3">
+            <div className="card-body">
+              <div className="row align-items-end">
+                <div className="col-md-4">
+                  <label className="form-label fw-bold">Estado</label>
+
+                  <select className="form-select" value={estadoFiltro} onChange={e => setEstadoFiltro(e.target.value)}>
+                    <option value="">Todas</option>
+                    <option value="PENDIENTE">Pendientes</option>
+                    <option value="APROBADO">Aprobadas</option>
+                    <option value="RECHAZADO">Rechazadas</option>
+                  </select>
+                </div>
+
+                <div className="col-md-4">
+                  <label className="form-label fw-bold">Servicio</label>
+
+                  <select className="form-select" value={servicioFiltro} onChange={e => setServicioFiltro(e.target.value)}>
+                    <option value="">Todos</option>
+
+                    {servicios.map(servicio => (
+                      <option key={servicio.id} value={servicio.id}>
+                        {servicio.servicio?.nombreZonaComun}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              </div>
+            </div>
+          </div>
+        </>
+      )}
       <div className="table-responsive">
         {reservasList?.length > 0 ? (
           <Table responsive>

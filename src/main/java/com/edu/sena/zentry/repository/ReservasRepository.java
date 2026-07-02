@@ -13,7 +13,7 @@ import org.springframework.stereotype.Repository;
  * Spring Data MongoDB repository for the Reservas entity.
  */
 @Repository
-public interface ReservasRepository extends MongoRepository<Reservas, String> {
+public interface ReservasRepository extends MongoRepository<Reservas, String>, ReservasRepositoryCustom {
     @Query("{}")
     Page<Reservas> findAllWithEagerRelationships(Pageable pageable);
 

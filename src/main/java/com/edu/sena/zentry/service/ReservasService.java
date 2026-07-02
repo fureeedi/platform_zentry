@@ -66,4 +66,6 @@ public interface ReservasService {
     void delete(String id);
 
     ReservasDTO cambiarEstado(String id, Estado estado);
+
+    Page<ReservasDTO> buscarPorFiltros(Estado estado, String servicioId, Pageable pageable);
 }
