@@ -1,0 +1,199 @@
+// =====================
+// MODELS (Schemas) MongoDB + validaciones ($jsonSchema)
+// =====================
+
+// Colección: tipo_documento
+db.createCollection("tipo_documento", {
+  validator: {
+    $jsonSchema: {
+      bsonType: "object",
+      required: ["nombreTipoDocumento"],
+      properties: {
+        nombreTipoDocumento: { bsonType: "string", maxLength: 50 }
+      }
+    }
+  }
+});
+
+// Colección: conjuntos_residenciales
+db.createCollection("conjuntos_residenciales", {
+  validator: {
+    $jsonSchema: {
+      bsonType: "object",
+      required: ["nombreConjunto", "direccionConjunto"],
+      properties: {
+        nombreConjunto: { bsonType: "string" },
+        direccionConjunto: { bsonType: "string" }
+      }
+    }
+  }
+});
+
+// Colección: tipo_documentos (si lo manejas aparte)
+db.createCollection("tipos_disponibilidad", { validator: { $jsonSchema: { bsonType: "object" } } });
+
+// Colección: anuncios
+db.createCollection("anuncios", {
+  validator: {
+    $jsonSchema: {
+      bsonType: "object",
+      required: ["titulo", "descripcion", "fecha", "imagen", "conjuntoResidencialId", "administradorConjuntoId"],
+      properties: {
+        titulo: { bsonType: "string", maxLength: 50 },
+        descripcion: { bsonType: "string", maxLength: 200 },
+        fecha: { bsonType: "date" },
+        imagen: { bsonType: "binData" }, // ImageBlob
+        conjuntoResidencialId: { bsonType: "objectId" },
+        administradorConjuntoId: { bsonType: "objectId" }
+      }
+    }
+  }
+});
+
+// Colección: servicios
+db.createCollection("servicios", {
+  validator: {
+    $jsonSchema: {
+      bsonType: "object",
+      required: ["disponibilidad", "nombreZonaComun", "descripcion"],
+      properties: {
+        disponibilidad: { bsonType: "string", maxLength: 200 },
+        nombreZonaComun: { bsonType: "string", maxLength: 50 },
+        descripcion: { bsonType: "string", maxLength: 200 }
+      }
+    }
+  }
+});
+
+// Colección: servicio_conjuntos
+db.createCollection("servicio_conjuntos", {
+  validator: {
+    $jsonSchema: {
+      bsonType: "object",
+      required: ["disponible", "aforoMaximo", "conjuntoResidencialId", "servicioId"],
+      properties: {
+        disponible: { bsonType: "string", enum: ["abierto", "cerrado", "en_mantenimiento"] },
+        aforoMaximo: { bsonType: "int", minimum: 1 },
+        conjuntoResidencialId: { bsonType: "objectId" },
+        servicioId: { bsonType: "objectId" }
+      }
+    }
+  }
+});
+
+// Colección: vinculado
+db.createCollection("vinculados", {
+  validator: {
+    $jsonSchema: {
+      bsonType: "object",
+      required: [
+        "nombres","apellidos","numeroDocumento","telefono","correo","activo",
+        "tipoDocumentoId","administradorConjuntoId"
+      ],
+      properties: {
+        nombres: { bsonType: "string", maxLength: 50 },
+        apellidos: { bsonType: "string", maxLength: 50 },
+        numeroDocumento: { bsonType: "string", maxLength: 20 },
+        telefono: { bsonType: "string", maxLength: 15 },
+        correo: { bsonType: "string", maxLength: 100 },
+        activo: { bsonType: "bool" },
+        tipoDocumentoId: { bsonType: "objectId" },
+        administradorConjuntoId: { bsonType: "objectId" }
+      }
+    }
+  }
+});
+
+// Colección: inmueble
+db.createCollection("inmuebles", {
+  validator: {
+    $jsonSchema: {
+      bsonType: "object",
+      required: ["tipoInmueble", "numeroInmueble", "conjuntoResidencialId"],
+      properties: {
+        tipoInmueble: { bsonType: "string", enum: ["Apartamento", "Casa"] },
+        torre: { bsonType: "string", maxLength: 10 },
+        numeroInmueble: { bsonType: "string", maxLength: 10 },
+        piso: { bsonType: "int" },
+        conjuntoResidencialId: { bsonType: "objectId" }
+      }
+    }
+  }
+});
+
+// Colección: administradores_conjuntos
+db.createCollection("administradores_conjuntos", {
+  validator: {
+    $jsonSchema: {
+      bsonType: "object",
+      required: ["nombres","apellidos","numeroDocumento","telefono","correo","activo","conjuntoResidencialId","tipoDocumentoId","userId"],
+      properties: {
+        nombres: { bsonType: "string", maxLength: 50 },
+        apellidos: { bsonType: "string", maxLength: 50 },
+        numeroDocumento: { bsonType: "string", maxLength: 20 },
+        telefono: { bsonType: "string", maxLength: 15 },
+        correo: { bsonType: "string" },
+        activo: { bsonType: "bool" },
+        conjuntoResidencialId: { bsonType: "objectId" },
+        tipoDocumentoId: { bsonType: "objectId" },
+        userId: { bsonType: "objectId" } // builtInEntity User
+      }
+    }
+  }
+});
+
+// Colección: vinculados_inmuebles
+db.createCollection("vinculados_inmuebles", {
+  validator: {
+    $jsonSchema: {
+      bsonType: "object",
+      required: ["tipoVinculo", "vinculadoId", "inmuebleId"],
+      properties: {
+        tipoVinculo: { bsonType: "string", enum: ["Propietario", "Arrendatario"] },
+        vinculadoId: { bsonType: "objectId" },
+        inmuebleId: { bsonType: "objectId" }
+      }
+    }
+  }
+});
+
+// Colección: reservas
+db.createCollection("reservas", {
+  validator: {
+    $jsonSchema: {
+      bsonType: "object",
+      required: ["fechaSolicitud","fechaReserva","horaInicio","horafin","cuposApartados","estado","servicioConjuntoId","vinculadoId"],
+      properties: {
+        fechaSolicitud: { bsonType: "date" }, // LocalDate -> Date (normaliza a 00:00)
+        fechaReserva: { bsonType: "date" },
+        horaInicio: { bsonType: "string", pattern: "^\\d{2}:\\d{2}$" }, // LocalTime "HH:mm"
+        horafin: { bsonType: "string", pattern: "^\\d{2}:\\d{2}$" },
+        cuposApartados: { bsonType: "int", minimum: 1 },
+        estado: { bsonType: "string", enum: ["Aprobado","Rechazado","Pendiente"] },
+        servicioConjuntoId: { bsonType: "objectId" },
+        vinculadoId: { bsonType: "objectId" }
+      }
+    }
+  }
+});
+
+// Colección: facturas_de_pago
+db.createCollection("facturas_de_pago", {
+  validator: {
+    $jsonSchema: {
+      bsonType: "object",
+      required: ["fechaEnvio","imagenFactura","conjuntoResidencialId","vinculadoId"],
+      properties: {
+        fechaEnvio: { bsonType: "date" }, // LocalDate -> Date (00:00)
+        imagenFactura: { bsonType: "binData" }, // ImageBlob -> binData
+        conjuntoResidencialId: { bsonType: "objectId" },
+        vinculadoId: { bsonType: "objectId" }
+      }
+    }
+  }
+});
+
+
+El jue, 2 jul 2026 a la(s) 12:27 a.m., Freddy Carrilo (pumarfreddy@gmail.com) escribió:
+
+
