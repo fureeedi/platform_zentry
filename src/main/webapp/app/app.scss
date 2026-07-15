@@ -9,8 +9,13 @@ body {
 }
 
 a {
-  color: #533f03;
+  color: #4fc3f7;
   font-weight: bold;
+
+  &:hover {
+    color: #81d4fa;
+    text-decoration: underline;
+  }
 }
 
 * {
@@ -313,4 +318,211 @@ http://stackoverflow.com/questions/23436430/bootstrap-3-input-group-100-width */
   width: 1% !important;
 }
 
+/* ======================================================================
+   Estilo base para todas las entidades
+====================================================================== */
+
+.entity-page {
+  background: #f2f2f2;
+  border-radius: 16px;
+  padding: 1.5rem;
+  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.08);
+  margin: 1rem 0;
+}
+
+.entity-page h2,
+.entity-page h1 {
+  font-size: 2.7rem;
+  color: #103040;
+  font-weight: 700;
+}
+
+.entity-table {
+  background: #fff;
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.entity-table table {
+  margin-bottom: 0;
+  background: #fff;
+}
+
+.entity-table thead {
+  background: #f8f9fa;
+}
+
+.entity-table thead th {
+  color: #495057;
+  font-weight: 700;
+  border-bottom: 2px solid #dee2e6;
+  padding: 14px;
+}
+
+.entity-table tbody tr {
+  background: #ffffff;
+  transition: 0.2s;
+}
+
+.entity-table tbody tr:hover {
+  background: #f5f9fc;
+}
+
+.entity-table tbody td {
+  color: #343a40;
+  padding: 14px;
+  vertical-align: middle;
+  border-top: 1px solid #ececec;
+}
+
+.entity-table a {
+  color: #123341;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.entity-table a:hover {
+  text-decoration: underline;
+}
+
+/* ==========================================================
+   Tablas de las entidades
+========================================================== */
+.entity-table .table {
+  --bs-table-bg: #ffffff;
+  --bs-table-color: #212529;
+  --bs-table-striped-bg: #f8f9fa;
+  --bs-table-hover-bg: #eef6ff;
+}
+
+/* Encabezado */
+.entity-table thead th {
+  background-color: #2b647d !important;
+  color: #ffffff !important;
+}
+
+/* Cuerpo */
+.entity-table tbody td {
+  background-color: #ffffff !important;
+  color: #212529 !important;
+}
+
+/* Botones */
+.entity-table .btn {
+  color: #ffffff !important;
+  border-radius: 12px;
+}
+
+.entity-table .btn svg {
+  color: #ffffff !important;
+}
+/*-------------------------*/
+
+.entity-table thead > tr > th {
+  background-color: #f8f9fa !important;
+  color: #1f2937 !important;
+  font-weight: 600;
+}
+
+.entity-table tbody > tr:hover > * {
+  background-color: #fff0f0 !important;
+}
+
+.entity-table {
+  background: #ffffff;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 6px 18px rgba(15, 23, 42, 0.25);
+}
+
+.entity-table .table thead tr th {
+  --bs-table-bg: #1f566d !important;
+  background-color: #1f566d !important;
+  box-shadow: inset 0 0 0 9999px #1f566d !important;
+  color: #ffffff !important;
+  font-weight: 800;
+}
+
+.entity-table .table td,
+.entity-table .table th {
+  border-color: #e9ecef;
+  padding: 15px 20px;
+  font-weight: 500;
+}
+
+/* ==========================================================
+   Contenedor de filtros
+========================================================== */
+
+.filter-card {
+  border: none;
+  border-radius: 12px;
+  background: #1f566d;
+  box-shadow: 0 6px 18px rgba(15, 23, 42, 0.25);
+  padding: 1.5rem;
+}
+
+.filter-card label {
+  font-size: 1.2rem;
+  font-weight: 800;
+  color: #ffffff;
+  margin-bottom: 0.5rem;
+}
+
+.filter-card .form-select {
+  height: 46px;
+  border-radius: 10px;
+  border: 1px solid #ced4da;
+  background: #ffd3d3;
+}
+
+.filter-card .form-select:focus {
+  border-color: #2b647d;
+  box-shadow: 0 0 0 0.2rem rgba(43, 100, 125, 0.18);
+}
+
+/* ============================
+   Paginación
+============================ */
+
+.pagination {
+  gap: 0.35rem;
+}
+
+.pagination-container {
+  padding-top: 1.5rem;
+}
+
+.pagination .page-item .page-link {
+  padding-top: 10px;
+  border: 1px solid #dbe4ec;
+  border-radius: 8px;
+  background: #ffffff;
+  color: #1f566d;
+  font-weight: 600;
+  min-width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.pagination .page-item .page-link:hover {
+  background: #1f566d;
+  color: #ffffff;
+  border-color: #1f566d;
+  transform: translateY(-1px);
+}
+
+.pagination .page-item.active .page-link {
+  background: #1f566d;
+  border-color: #1f566d;
+  color: #ffffff;
+}
+
+.pagination .page-item.disabled .page-link {
+  background: #ffffff;
+  color: #adb5bd;
+  border-color: #bcc4cd;
+}
 /* jhipster-needle-scss-add-main JHipster will add new css style */

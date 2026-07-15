@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Button, Table } from 'react-bootstrap';
-import { JhiItemCount, JhiPagination, TextFormat, getPaginationState } from 'react-jhipster';
+import { JhiPagination, TextFormat, getPaginationState } from 'react-jhipster';
 import { Link, useLocation, useNavigate } from 'react-router';
 
 import { faSort, faSortDown, faSortUp } from '@fortawesome/free-solid-svg-icons';
@@ -127,9 +127,11 @@ export const Reservas = () => {
   };
 
   return (
-    <div>
-      <h2 id="reservas-heading" data-cy="ReservasHeading">
-        Reservas
+    <div className="entity-page">
+      <div className="d-flex justify-content-between align-items-center">
+        <h2 id="reservas-heading" data-cy="ReservasHeading">
+          Reservas
+        </h2>
         <div className="d-flex justify-content-end">
           {isAdministradorConjunto && (
             <Button className="me-2" variant="info" onClick={handleSyncList} disabled={loading}>
@@ -143,14 +145,14 @@ export const Reservas = () => {
             </Link>
           )}
         </div>
-      </h2>
+      </div>
       {isAdministradorConjunto && (
         <>
-          <div className="card mb-3">
+          <div className="card filter-card mb-3">
             <div className="card-body">
               <div className="row align-items-end">
                 <div className="col-md-4">
-                  <label className="form-label fw-bold">Estado</label>
+                  <label className="form-label">Estado</label>
 
                   <select className="form-select" value={estadoFiltro} onChange={e => setEstadoFiltro(e.target.value)}>
                     <option value="">Todas</option>
@@ -161,7 +163,7 @@ export const Reservas = () => {
                 </div>
 
                 <div className="col-md-4">
-                  <label className="form-label fw-bold">Servicio</label>
+                  <label className="form-label">Servicio</label>
 
                   <select className="form-select" value={servicioFiltro} onChange={e => setServicioFiltro(e.target.value)}>
                     <option value="">Todos</option>
@@ -178,7 +180,7 @@ export const Reservas = () => {
           </div>
         </>
       )}
-      <div className="table-responsive">
+      <div className="table-responsive entity-table">
         {reservasList?.length > 0 ? (
           <Table responsive>
             <thead>
@@ -188,32 +190,14 @@ export const Reservas = () => {
                     ID <FontAwesomeIcon icon={getSortIconByFieldName('id')} />
                   </th>
                 )}
-                <th className="hand" onClick={sort('fechaSolicitud')}>
-                  Fecha Solicitud <FontAwesomeIcon icon={getSortIconByFieldName('fechaSolicitud')} />
-                </th>
-                <th className="hand" onClick={sort('fechaReserva')}>
-                  Fecha Reserva <FontAwesomeIcon icon={getSortIconByFieldName('fechaReserva')} />
-                </th>
-                <th className="hand" onClick={sort('horaInicio')}>
-                  Hora Inicio <FontAwesomeIcon icon={getSortIconByFieldName('horaInicio')} />
-                </th>
-                <th className="hand" onClick={sort('horafin')}>
-                  Horafin <FontAwesomeIcon icon={getSortIconByFieldName('horafin')} />
-                </th>
-                <th className="hand" onClick={sort('cuposApartados')}>
-                  Cupos Apartados <FontAwesomeIcon icon={getSortIconByFieldName('cuposApartados')} />
-                </th>
-                <th className="hand" onClick={sort('estado')}>
-                  Estado <FontAwesomeIcon icon={getSortIconByFieldName('estado')} />
-                </th>
-                <th>
-                  Servicio Conjunto <FontAwesomeIcon icon="sort" />
-                </th>
-                {isAdministradorConjunto && (
-                  <th>
-                    Vinculado <FontAwesomeIcon icon="sort" />
-                  </th>
-                )}
+                <th>Fecha Solicitud</th>
+                <th>Fecha Reserva</th>
+                <th>Hora Inicio</th>
+                <th>Hora Finalización</th>
+                <th>Cupos Apartados</th>
+                <th>Estado estado</th>
+                <th>Servicio Conjunto</th>
+                {isAdministradorConjunto && <th>Vinculado</th>}
                 <th />
               </tr>
             </thead>
@@ -349,10 +333,7 @@ export const Reservas = () => {
         )}
       </div>
       {totalItems ? (
-        <div className={reservasList && reservasList.length > 0 ? '' : 'd-none'}>
-          <div className="justify-content-center d-flex">
-            <JhiItemCount page={paginationState.activePage} total={totalItems} itemsPerPage={paginationState.itemsPerPage} />
-          </div>
+        <div className="pagination-container">
           <div className="justify-content-center d-flex">
             <JhiPagination
               activePage={paginationState.activePage}

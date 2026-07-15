@@ -23,6 +23,9 @@ export const ReservasDetail = () => {
 
   const reservasEntity = useAppSelector(state => state.reservas.entity);
   const isAdmin = useAppSelector(state => hasAnyAuthority(state.authentication.account.authorities, [Authority.ADMIN]));
+  const isAdministradorConjunto = useAppSelector(state =>
+    hasAnyAuthority(state.authentication.account.authorities, [Authority.ADMINISTRADOR_CONJUNTO]),
+  );
   return (
     <Row>
       <Col md="8">
@@ -70,20 +73,28 @@ export const ReservasDetail = () => {
           <dd>{reservasEntity.estado}</dd>
           <dt>Servicio Conjunto</dt>
           <dd>{reservasEntity.servicioConjunto?.servicio?.nombreZonaComun}</dd>
-          <dt>Vinculado</dt>
-          <dd>
-            {reservasEntity.vinculado
-              ? `${reservasEntity.vinculado.nombres} ${reservasEntity.vinculado.apellidos} - ${reservasEntity.vinculado.numeroDocumento}`
-              : ''}
-          </dd>
+          {isAdministradorConjunto && (
+            <>
+              <dt>Vinculado</dt>
+              <dd>
+                {reservasEntity.vinculado
+                  ? `${reservasEntity.vinculado.nombres} ${reservasEntity.vinculado.apellidos} - ${reservasEntity.vinculado.numeroDocumento}`
+                  : ''}
+              </dd>
+            </>
+          )}
         </dl>
         <Button as={Link as any} to="/reservas" replace variant="info" data-cy="entityDetailsBackButton">
           <FontAwesomeIcon icon="arrow-left" /> <span className="d-none d-md-inline">Volver</span>
         </Button>
         &nbsp;
-        <Button as={Link as any} to={`/reservas/${reservasEntity.id}/edit`} replace variant="primary">
-          <FontAwesomeIcon icon="pencil-alt" /> <span className="d-none d-md-inline">Editar</span>
-        </Button>
+        {isAdmin && (
+          <>
+            <Button as={Link as any} to={`/reservas/${reservasEntity.id}/edit`} replace variant="primary">
+              <FontAwesomeIcon icon="pencil-alt" /> <span className="d-none d-md-inline">Editar</span>
+            </Button>
+          </>
+        )}
       </Col>
     </Row>
   );
