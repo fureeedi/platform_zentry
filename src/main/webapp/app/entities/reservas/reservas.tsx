@@ -128,7 +128,7 @@ export const Reservas = () => {
 
   return (
     <div className="entity-page">
-      <div className="d-flex justify-content-between align-items-center">
+      <div className="d-flex justify-content-between align-items-center mb-4">
         <h2 id="reservas-heading" data-cy="ReservasHeading">
           Reservas
         </h2>
@@ -195,8 +195,8 @@ export const Reservas = () => {
                 <th>Hora Inicio</th>
                 <th>Hora Finalización</th>
                 <th>Cupos Apartados</th>
-                <th>Estado estado</th>
-                <th>Servicio Conjunto</th>
+                <th>Estado</th>
+                <th>Servicio</th>
                 {isAdministradorConjunto && <th>Vinculado</th>}
                 <th />
               </tr>
@@ -223,9 +223,9 @@ export const Reservas = () => {
                   <td>{reservas.horafin}</td>
                   <td>{reservas.cuposApartados}</td>
                   <td>
-                    {reservas.estado === 'PENDIENTE' && <span className="badge bg-warning text-dark">Pendiente</span>}
-                    {reservas.estado === 'APROBADO' && <span className="badge bg-success">Aprobado</span>}
-                    {reservas.estado === 'RECHAZADO' && <span className="badge bg-danger">Rechazado</span>}
+                    {reservas.estado === 'PENDIENTE' && <span className="badge bg-warning fs-6 px-3 py-2">PENDIENTE</span>}
+                    {reservas.estado === 'APROBADO' && <span className="badge bg-success fs-6 px-3 py-2">APROBADO</span>}
+                    {reservas.estado === 'RECHAZADO' && <span className="badge bg-danger fs-6 px-3 py-2">RECHAZADO</span>}
                   </td>
                   <td>
                     {reservas.servicioConjunto ? (

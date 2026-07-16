@@ -525,4 +525,127 @@ http://stackoverflow.com/questions/23436430/bootstrap-3-input-group-100-width */
   color: #adb5bd;
   border-color: #bcc4cd;
 }
+
+/*=================================
+    Detalles de la entidades
+==================================*/
+
+.entity-detail-card {
+  background: #fff;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
+}
+
+.entity-detail-header {
+  background: #1f566d;
+  color: white;
+
+  padding: 1.5rem 2rem;
+
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.entity-detail-header h2 {
+  margin: 0;
+  font-size: 2rem;
+  font-weight: 700;
+}
+
+.entity-id {
+  opacity: 0.8;
+  font-size: 0.9rem;
+}
+
+.entity-detail-body {
+  padding: 2rem;
+}
+
+.entity-detail-section {
+  margin-bottom: 1rem;
+}
+
+.entity-detail-section h4 {
+  color: #1f566d;
+  font-weight: 700;
+  margin-bottom: 1.5rem;
+  border-bottom: 2px solid #e8eef3;
+  padding-bottom: 0.5rem;
+}
+
+.entity-detail-section label {
+  display: block;
+  font-weight: 700;
+  color: #6c757d;
+  margin-bottom: 0.35rem;
+}
+
+.entity-detail-section p {
+  font-size: 1rem;
+  color: #212529;
+  margin-bottom: 1.5rem;
+}
+
+/*=================================
+    Información detalles
+==================================*/
+
+.info-card {
+  background: #f8fafc;
+  border: 1px solid #e3e8ef;
+  border-radius: 12px;
+  padding: 1rem 1.2rem;
+  margin-bottom: 1rem;
+  transition: all 0.25s ease;
+}
+
+.info-title {
+  display: block;
+  color: #1f566d;
+  font-size: 0.78rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+  margin-bottom: 0.45rem;
+}
+
+.info-value {
+  display: block;
+  color: #000000;
+  font-size: 1.05rem;
+  font-weight: 500;
+}
+
+.status-badge {
+  font-size: 0.95rem;
+  font-weight: 700;
+  padding: 0.45rem 1rem;
+  border-radius: 12px;
+}
+
+.status-badge.PENDIENTE {
+  background: #cb4816;
+  color: white;
+}
+
+.status-badge.APROBADO {
+  background: #2aa198;
+  color: white;
+}
+
+.status-badge.RECHAZADO {
+  background: #d33682;
+  color: white;
+}
+
+/* Botones detalles reserva */
+
+.entity-detail-actions {
+  display: flex;
+  justify-content: center;
+  margin-top: 15px;
+  padding-top: 15px;
+}
 /* jhipster-needle-scss-add-main JHipster will add new css style */
