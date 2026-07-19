@@ -648,4 +648,75 @@ http://stackoverflow.com/questions/23436430/bootstrap-3-input-group-100-width */
   margin-top: 15px;
   padding-top: 15px;
 }
+
+/*=================================
+    Formularios Entidades
+==================================*/
+
+.entity-detail-card .form-control {
+  background-color: #e5e5e5;
+  border: 1px solid #d6dee8;
+  border-radius: 10px;
+}
+
+.entity-form .form-control,
+.entity-form .form-select {
+  border-radius: 10px;
+  min-height: 48px;
+  transition: 0.2s;
+}
+
+.form-select:focus {
+  border-color: #1f566d;
+  box-shadow: none !important;
+}
+
+.form-control.is-invalid:focus {
+  border-color: #1f566d;
+  box-shadow: none !important;
+}
+
+.entity-form-actions {
+  display: flex;
+
+  justify-content: center;
+
+  gap: 1rem;
+
+  margin-top: 2rem;
+}
+
+.entity-form-actions .btn-primary {
+  min-width: 160px;
+
+  font-weight: 700;
+}
+
+.form-label {
+  display: block;
+  font-size: 0.78rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+  margin-bottom: 0.45rem;
+  color: #1f566d;
+}
+
+.entity-detail-section label {
+  display: block;
+  font-weight: 700;
+  color: #1f566d;
+  margin-bottom: 0.35rem;
+}
+
+/* Boton guardar */
+.btn-primary {
+  background-color: #24647f;
+  border-color: #24647f;
+}
+
+.btn-primary:hover {
+  background-color: #1a485b;
+  border-color: #1a485b;
+}
 /* jhipster-needle-scss-add-main JHipster will add new css style */

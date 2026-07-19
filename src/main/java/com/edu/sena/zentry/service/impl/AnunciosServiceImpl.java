@@ -1,10 +1,16 @@
 package com.edu.sena.zentry.service.impl;
 
+import com.edu.sena.zentry.domain.AdministradorConjunto;
 import com.edu.sena.zentry.domain.Anuncios;
+import com.edu.sena.zentry.domain.User;
+import com.edu.sena.zentry.repository.AdministradorConjuntoRepository;
 import com.edu.sena.zentry.repository.AnunciosRepository;
+import com.edu.sena.zentry.repository.UserRepository;
+import com.edu.sena.zentry.security.SecurityUtils;
 import com.edu.sena.zentry.service.AnunciosService;
 import com.edu.sena.zentry.service.dto.AnunciosDTO;
 import com.edu.sena.zentry.service.mapper.AnunciosMapper;
+import java.time.ZonedDateTime;
 import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,15 +30,45 @@ public class AnunciosServiceImpl implements AnunciosService {
 
     private final AnunciosMapper anunciosMapper;
 
-    public AnunciosServiceImpl(AnunciosRepository anunciosRepository, AnunciosMapper anunciosMapper) {
+    private final UserRepository userRepository;
+
+    private final AdministradorConjuntoRepository administradorConjuntoRepository;
+
+    public AnunciosServiceImpl(
+        AnunciosRepository anunciosRepository,
+        AnunciosMapper anunciosMapper,
+        UserRepository userRepository,
+        AdministradorConjuntoRepository administradorConjuntoRepository
+    ) {
         this.anunciosRepository = anunciosRepository;
         this.anunciosMapper = anunciosMapper;
+        this.userRepository = userRepository;
+        this.administradorConjuntoRepository = administradorConjuntoRepository;
     }
 
     @Override
     public AnunciosDTO save(AnunciosDTO anunciosDTO) {
         LOG.debug("Request to save Anuncios : {}", anunciosDTO);
         Anuncios anuncios = anunciosMapper.toEntity(anunciosDTO);
+
+        // Obtiene usuario autenticado
+        String login = SecurityUtils.getCurrentUserLogin().orElseThrow();
+
+        // Obtiene usuario que inició sesión
+        User user = userRepository.findOneByLogin(login).orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+
+        // Obtiene el administrador conjunto asociado al usuario autenticado
+        AdministradorConjunto administradorConjunto = administradorConjuntoRepository
+            .findOneByUser(user)
+            .orElseThrow(() -> new RuntimeException("Administrador del conjunto no encontrado"));
+
+        // Asigna el administrador y el conjunto residencial al anuncio
+        anuncios.setAdministradorConjunto(administradorConjunto);
+        anuncios.setConjuntoResidencial(administradorConjunto.getConjuntoResidencial());
+
+        // Asignar fecha y hora
+        anuncios.setFecha(ZonedDateTime.now());
+
         anuncios = anunciosRepository.save(anuncios);
         return anunciosMapper.toDto(anuncios);
     }
@@ -41,6 +77,22 @@ public class AnunciosServiceImpl implements AnunciosService {
     public AnunciosDTO update(AnunciosDTO anunciosDTO) {
         LOG.debug("Request to update Anuncios : {}", anunciosDTO);
         Anuncios anuncios = anunciosMapper.toEntity(anunciosDTO);
+
+        // Obtiene usuario autenticado
+        String login = SecurityUtils.getCurrentUserLogin().orElseThrow();
+
+        // Obtiene usuario que inició sesión
+        User user = userRepository.findOneByLogin(login).orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+
+        // Obtiene el administrador conjunto asociado al usuario autenticado
+        AdministradorConjunto administradorConjunto = administradorConjuntoRepository
+            .findOneByUser(user)
+            .orElseThrow(() -> new RuntimeException("Administrador del conjunto no encontrado"));
+
+        // Asigna el administrador y el conjunto residencial al anuncio
+        anuncios.setAdministradorConjunto(administradorConjunto);
+        anuncios.setConjuntoResidencial(administradorConjunto.getConjuntoResidencial());
+
         anuncios = anunciosRepository.save(anuncios);
         return anunciosMapper.toDto(anuncios);
     }
@@ -49,10 +101,25 @@ public class AnunciosServiceImpl implements AnunciosService {
     public Optional<AnunciosDTO> partialUpdate(AnunciosDTO anunciosDTO) {
         LOG.debug("Request to partially update Anuncios : {}", anunciosDTO);
 
+        // Obtiene el usuario autenticado
+        String login = SecurityUtils.getCurrentUserLogin().orElseThrow();
+
+        // Recupera el usuario que inició sesión
+        User user = userRepository.findOneByLogin(login).orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+
+        // Obtiene el administrador asociado al usuario autenticado
+        AdministradorConjunto administradorConjunto = administradorConjuntoRepository
+            .findOneByUser(user)
+            .orElseThrow(() -> new RuntimeException("Administrador del conjunto no encontrado"));
+
         return anunciosRepository
             .findById(anunciosDTO.getId())
             .map(existingAnuncios -> {
                 anunciosMapper.partialUpdate(existingAnuncios, anunciosDTO);
+
+                // Mantiene el administrador y el conjunto del usuario autenticado
+                existingAnuncios.setAdministradorConjunto(administradorConjunto);
+                existingAnuncios.setConjuntoResidencial(administradorConjunto.getConjuntoResidencial());
 
                 return existingAnuncios;
             })
