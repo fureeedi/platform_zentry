@@ -1,5 +1,6 @@
 package com.edu.sena.zentry.web.rest;
 
+import com.edu.sena.zentry.domain.enumeration.Estado;
 import com.edu.sena.zentry.repository.ReservasRepository;
 import com.edu.sena.zentry.security.AuthoritiesConstants;
 import com.edu.sena.zentry.service.ReservasService;
@@ -145,6 +146,19 @@ public class ReservasResource {
     }
 
     /**
+     *
+     */
+    @PatchMapping("/{id}/estado")
+    @PreAuthorize("hasAuthority(\"" + AuthoritiesConstants.ADMINISTRADOR_CONJUNTO + "\")")
+    public ResponseEntity<ReservasDTO> cambiarEstado(@PathVariable String id, @RequestParam Estado estado) {
+        LOG.debug("REST request para cambiar el estado de la reserva {} a {}", id, estado);
+
+        ReservasDTO resultado = reservasService.cambiarEstado(id, estado);
+
+        return ResponseEntity.ok(resultado);
+    }
+
+    /**
      * {@code GET  /reservas} : get all the Reservas.
      *
      * @param pageable the pagination information.
@@ -163,15 +177,12 @@ public class ReservasResource {
     )
     public ResponseEntity<List<ReservasDTO>> getAllReservases(
         @org.springdoc.core.annotations.ParameterObject Pageable pageable,
-        @RequestParam(name = "eagerload", required = false, defaultValue = "true") boolean eagerload
+        @RequestParam(required = false) Estado estado,
+        @RequestParam(required = false) String servicioId
     ) {
-        LOG.debug("REST request to get a page of Reservases");
-        Page<ReservasDTO> page;
-        if (eagerload) {
-            page = reservasService.findAllWithEagerRelationships(pageable);
-        } else {
-            page = reservasService.findAll(pageable);
-        }
+        LOG.debug("REST request to retrieve filtered Reservases");
+        Page<ReservasDTO> page = reservasService.buscarPorFiltros(estado, servicioId, pageable);
+
         HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
         return ResponseEntity.ok().headers(headers).body(page.getContent());
     }

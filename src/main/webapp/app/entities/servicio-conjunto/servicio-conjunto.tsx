@@ -29,7 +29,8 @@ export const ServicioConjunto = () => {
   const totalItems = useAppSelector(state => state.servicioConjunto.totalItems);
   const account = useAppSelector(state => state.authentication.account);
 
-  const isAdministradorConjunto = hasAnyAuthority(account.authorities, [Authority.ADMIN, Authority.ADMINISTRADOR_CONJUNTO]);
+  const isAdministradorConjunto = hasAnyAuthority(account.authorities, [Authority.ADMINISTRADOR_CONJUNTO]);
+  const isAdmin = hasAnyAuthority(account.authorities, [Authority.ADMIN]);
 
   const getAllEntities = () => {
     dispatch(
@@ -100,9 +101,13 @@ export const ServicioConjunto = () => {
       <h2 id="servicio-conjunto-heading" data-cy="ServicioConjuntoHeading">
         Servicio Conjuntos
         <div className="d-flex justify-content-end">
-          <Button className="me-2" variant="info" onClick={handleSyncList} disabled={loading}>
-            <FontAwesomeIcon icon="sync" spin={loading} /> Refrescar lista
-          </Button>
+          {isAdmin && (
+            <>
+              <Button className="me-2" variant="info" onClick={handleSyncList} disabled={loading}>
+                <FontAwesomeIcon icon="sync" spin={loading} /> Refrescar lista
+              </Button>
+            </>
+          )}
           {isAdministradorConjunto && (
             <Link
               to="/servicio-conjunto/new"
@@ -121,9 +126,11 @@ export const ServicioConjunto = () => {
           <Table responsive>
             <thead>
               <tr>
-                <th className="hand" onClick={sort('id')}>
-                  ID <FontAwesomeIcon icon={getSortIconByFieldName('id')} />
-                </th>
+                {isAdmin && (
+                  <th className="hand" onClick={sort('id')}>
+                    ID <FontAwesomeIcon icon={getSortIconByFieldName('id')} />
+                  </th>
+                )}
                 <th className="hand" onClick={sort('disponible')}>
                   Disponible <FontAwesomeIcon icon={getSortIconByFieldName('disponible')} />
                 </th>
@@ -142,11 +149,13 @@ export const ServicioConjunto = () => {
             <tbody>
               {servicioConjuntoList.map(servicioConjunto => (
                 <tr key={`entity-${servicioConjunto.id}`} data-cy="entityTable">
-                  <td>
-                    <Button as={Link as any} to={`/servicio-conjunto/${servicioConjunto.id}`} variant="link" size="sm">
-                      {servicioConjunto.id}
-                    </Button>
-                  </td>
+                  {isAdmin && (
+                    <td>
+                      <Button as={Link as any} to={`/servicio-conjunto/${servicioConjunto.id}`} variant="link" size="sm">
+                        {servicioConjunto.id}
+                      </Button>
+                    </td>
+                  )}
                   <td>{servicioConjunto.disponible}</td>
                   <td>{servicioConjunto.aforoMaximo}</td>
                   <td>

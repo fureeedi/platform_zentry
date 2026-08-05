@@ -9,8 +9,13 @@ body {
 }
 
 a {
-  color: #533f03;
+  color: #4fc3f7;
   font-weight: bold;
+
+  &:hover {
+    color: #81d4fa;
+    text-decoration: underline;
+  }
 }
 
 * {
@@ -313,4 +318,511 @@ http://stackoverflow.com/questions/23436430/bootstrap-3-input-group-100-width */
   width: 1% !important;
 }
 
+/* ======================================================================
+   Estilo base para todas las entidades
+====================================================================== */
+
+.entity-page {
+  background: #f2f2f2;
+  border-radius: 16px;
+  padding: 1.5rem;
+  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.08);
+  margin: 1rem 0;
+}
+
+.entity-page h2,
+.entity-page h1 {
+  font-size: 2.7rem;
+  color: #103040;
+  font-weight: 700;
+}
+
+.entity-table {
+  background: #fff;
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.entity-table table {
+  margin-bottom: 0;
+  background: #fff;
+}
+
+.entity-table thead {
+  background: #f8f9fa;
+}
+
+.entity-table thead th {
+  color: #495057;
+  font-weight: 700;
+  border-bottom: 2px solid #dee2e6;
+  padding: 14px;
+}
+
+.entity-table tbody tr {
+  background: #ffffff;
+  transition: 0.2s;
+}
+
+.entity-table tbody tr:hover {
+  background: #f5f9fc;
+}
+
+.entity-table tbody td {
+  color: #343a40;
+  padding: 14px;
+  vertical-align: middle;
+  border-top: 1px solid #ececec;
+}
+
+.entity-table a {
+  color: #123341;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.entity-table a:hover {
+  text-decoration: underline;
+}
+
+/* ==========================================================
+   Tablas de las entidades
+========================================================== */
+.entity-table .table {
+  --bs-table-bg: #ffffff;
+  --bs-table-color: #212529;
+  --bs-table-striped-bg: #f8f9fa;
+  --bs-table-hover-bg: #eef6ff;
+}
+
+/* Encabezado */
+.entity-table thead th {
+  background-color: #2b647d !important;
+  color: #ffffff !important;
+}
+
+/* Cuerpo */
+.entity-table tbody td {
+  background-color: #ffffff !important;
+  color: #212529 !important;
+}
+
+/* Botones */
+.entity-table .btn {
+  color: #ffffff !important;
+  border-radius: 12px;
+}
+
+.entity-table .btn svg {
+  color: #ffffff !important;
+}
+/*-------------------------*/
+
+.entity-table thead > tr > th {
+  background-color: #f8f9fa !important;
+  color: #1f2937 !important;
+  font-weight: 600;
+}
+
+.entity-table tbody > tr:hover > * {
+  background-color: #fff0f0 !important;
+}
+
+.entity-table {
+  background: #ffffff;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 6px 18px rgba(15, 23, 42, 0.25);
+}
+
+.entity-table .table thead tr th {
+  --bs-table-bg: #1f566d !important;
+  background-color: #1f566d !important;
+  box-shadow: inset 0 0 0 9999px #1f566d !important;
+  color: #ffffff !important;
+  font-weight: 800;
+}
+
+.entity-table .table td,
+.entity-table .table th {
+  border-color: #e9ecef;
+  padding: 15px 20px;
+  font-weight: 500;
+}
+
+/* ==========================================================
+   Contenedor de filtros
+========================================================== */
+
+.filter-card {
+  border: none;
+  border-radius: 12px;
+  background: #1f566d;
+  box-shadow: 0 6px 18px rgba(15, 23, 42, 0.25);
+  padding: 1.5rem;
+}
+
+.filter-card label {
+  font-size: 1.2rem;
+  font-weight: 800;
+  color: #ffffff;
+  margin-bottom: 0.5rem;
+}
+
+.filter-card .form-select {
+  height: 46px;
+  border-radius: 10px;
+  border: 1px solid #ced4da;
+  background: #ffd3d3;
+}
+
+.filter-card .form-select:focus {
+  border-color: #2b647d;
+  box-shadow: 0 0 0 0.2rem rgba(43, 100, 125, 0.18);
+}
+
+/* ============================
+   Paginación
+============================ */
+
+.pagination {
+  gap: 0.35rem;
+}
+
+.pagination-container {
+  padding-top: 1.5rem;
+}
+
+.pagination .page-item .page-link {
+  padding-top: 10px;
+  border: 1px solid #dbe4ec;
+  border-radius: 8px;
+  background: #ffffff;
+  color: #1f566d;
+  font-weight: 600;
+  min-width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.pagination .page-item .page-link:hover {
+  background: #1f566d;
+  color: #ffffff;
+  border-color: #1f566d;
+  transform: translateY(-1px);
+}
+
+.pagination .page-item.active .page-link {
+  background: #1f566d;
+  border-color: #1f566d;
+  color: #ffffff;
+}
+
+.pagination .page-item.disabled .page-link {
+  background: #ffffff;
+  color: #adb5bd;
+  border-color: #bcc4cd;
+}
+
+/*=================================
+    Detalles de la entidades
+==================================*/
+
+.entity-detail-card {
+  background: #fff;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
+}
+
+.entity-detail-header {
+  background: #1f566d;
+  color: white;
+
+  padding: 1.5rem 2rem;
+
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.entity-detail-header h2 {
+  margin: 0;
+  font-size: 2rem;
+  font-weight: 700;
+}
+
+.entity-id {
+  opacity: 0.8;
+  font-size: 0.9rem;
+}
+
+.entity-detail-body {
+  padding: 2rem;
+}
+
+.entity-detail-section {
+  margin-bottom: 1rem;
+}
+
+.entity-detail-section h4 {
+  color: #1f566d;
+  font-weight: 700;
+  margin-bottom: 1.5rem;
+  border-bottom: 2px solid #e8eef3;
+  padding-bottom: 0.5rem;
+}
+
+.entity-detail-section label {
+  display: block;
+  font-weight: 700;
+  color: #6c757d;
+  margin-bottom: 0.35rem;
+}
+
+.entity-detail-section p {
+  font-size: 1rem;
+  color: #212529;
+  margin-bottom: 1.5rem;
+}
+
+/*=================================
+    Información detalles
+==================================*/
+
+.info-card {
+  background: #f8fafc;
+  border: 1px solid #e3e8ef;
+  border-radius: 12px;
+  padding: 1rem 1.2rem;
+  margin-bottom: 1rem;
+  transition: all 0.25s ease;
+}
+
+.info-title {
+  display: block;
+  color: #1f566d;
+  font-size: 0.78rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+  margin-bottom: 0.45rem;
+}
+
+.info-value {
+  display: block;
+  color: #000000;
+  font-size: 1.05rem;
+  font-weight: 500;
+}
+
+.status-badge {
+  font-size: 0.95rem;
+  font-weight: 700;
+  padding: 0.45rem 1rem;
+  border-radius: 12px;
+}
+
+.status-badge.PENDIENTE {
+  background: #cb4816;
+  color: white;
+}
+
+.status-badge.APROBADO {
+  background: #2aa198;
+  color: white;
+}
+
+.status-badge.RECHAZADO {
+  background: #d33682;
+  color: white;
+}
+
+/* Botones detalles reserva */
+
+.entity-detail-actions {
+  display: flex;
+  justify-content: center;
+  margin-top: 15px;
+  padding-top: 15px;
+}
+
+/*=================================
+    Formularios Entidades
+==================================*/
+
+.entity-detail-card .form-control {
+  background-color: #e5e5e5;
+  border: 1px solid #d6dee8;
+  border-radius: 10px;
+}
+
+.entity-form .form-control,
+.entity-form .form-select {
+  border-radius: 10px;
+  min-height: 48px;
+  transition: 0.2s;
+}
+
+.form-select:focus {
+  border-color: #1f566d;
+  box-shadow: none !important;
+}
+
+.form-control.is-invalid:focus {
+  border-color: #1f566d;
+  box-shadow: none !important;
+}
+
+.entity-form-actions {
+  display: flex;
+
+  justify-content: center;
+
+  gap: 1rem;
+
+  margin-top: 2rem;
+}
+
+.entity-form-actions .btn-primary {
+  min-width: 160px;
+
+  font-weight: 700;
+}
+
+.form-label {
+  display: block;
+  font-size: 0.78rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+  margin-bottom: 0.45rem;
+  color: #1f566d;
+}
+
+.entity-detail-section label {
+  display: block;
+  font-weight: 700;
+  color: #1f566d;
+  margin-bottom: 0.35rem;
+}
+
+/* Boton guardar */
+.btn-primary {
+  background-color: #24647f;
+  border-color: #24647f;
+}
+
+.btn-primary:hover {
+  background-color: #1a485b;
+  border-color: #1a485b;
+}
+
+/* ==========================================================
+   Anuncios
+========================================================== */
+.anuncios-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  margin-top: none;
+}
+
+.anuncio-card {
+  display: flex;
+  background: #fff;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
+  min-height: 320px;
+}
+
+.anuncio-card-header {
+  background: #1f566d;
+  color: #fff;
+  padding: 1rem 1.5rem;
+}
+
+.anuncio-card-header h4 {
+  margin: 0;
+  font-weight: 700;
+}
+
+.anuncio-card-image-container {
+  width: 45%;
+  min-width: 280px;
+  background: #f7f9fc;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 1.5rem;
+  border-right: 1px solid #e4e9ef;
+}
+
+.anuncio-card-image {
+  max-width: 100%;
+  max-height: 260px;
+  object-fit: contain;
+  border-radius: 10px;
+}
+
+.anuncio-card-no-image {
+  width: 100%;
+  height: 260px;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  border: 2px dashed #c7d2db;
+  border-radius: 10px;
+
+  color: #8b97a5;
+  font-weight: 600;
+}
+
+.anuncio-card-body {
+  flex: 1;
+  padding: 2rem;
+
+  display: flex;
+  flex-direction: column;
+}
+
+.anuncio-card-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  padding: 2rem;
+}
+
+.anuncio-card-info-full {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  padding: 2rem;
+}
+
+.info-card-anuncio {
+  background: #f8fafc;
+  border: 1px solid #e3e8ef;
+  border-radius: 12px;
+  padding: 0.55rem 0.75rem;
+  margin-bottom: 0.75rem;
+}
+
+@media (max-width: 992px) {
+  .anuncio-card {
+    flex-direction: column;
+  }
+
+  .anuncio-card-image-container {
+    width: 100%;
+    min-width: 100%;
+    border-right: none;
+    border-bottom: 1px solid #e4e9ef;
+  }
+}
 /* jhipster-needle-scss-add-main JHipster will add new css style */

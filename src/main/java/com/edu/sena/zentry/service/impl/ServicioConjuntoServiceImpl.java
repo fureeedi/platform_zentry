@@ -1,7 +1,12 @@
 package com.edu.sena.zentry.service.impl;
 
+import com.edu.sena.zentry.domain.AdministradorConjunto;
 import com.edu.sena.zentry.domain.ServicioConjunto;
+import com.edu.sena.zentry.domain.User;
+import com.edu.sena.zentry.repository.AdministradorConjuntoRepository;
 import com.edu.sena.zentry.repository.ServicioConjuntoRepository;
+import com.edu.sena.zentry.repository.UserRepository;
+import com.edu.sena.zentry.security.SecurityUtils;
 import com.edu.sena.zentry.service.ServicioConjuntoService;
 import com.edu.sena.zentry.service.dto.ServicioConjuntoDTO;
 import com.edu.sena.zentry.service.mapper.ServicioConjuntoMapper;
@@ -24,18 +29,39 @@ public class ServicioConjuntoServiceImpl implements ServicioConjuntoService {
 
     private final ServicioConjuntoMapper servicioConjuntoMapper;
 
+    private final AdministradorConjuntoRepository administradorConjuntoRepository;
+
+    private final UserRepository userRepository;
+
     public ServicioConjuntoServiceImpl(
         ServicioConjuntoRepository servicioConjuntoRepository,
-        ServicioConjuntoMapper servicioConjuntoMapper
+        ServicioConjuntoMapper servicioConjuntoMapper,
+        AdministradorConjuntoRepository administradorConjuntoRepository,
+        UserRepository userRepository
     ) {
         this.servicioConjuntoRepository = servicioConjuntoRepository;
         this.servicioConjuntoMapper = servicioConjuntoMapper;
+        this.administradorConjuntoRepository = administradorConjuntoRepository;
+        this.userRepository = userRepository;
     }
 
     @Override
     public ServicioConjuntoDTO save(ServicioConjuntoDTO servicioConjuntoDTO) {
         LOG.debug("Request to save ServicioConjunto : {}", servicioConjuntoDTO);
+
+        String login = SecurityUtils.getCurrentUserLogin().orElseThrow();
+
+        User user = userRepository.findOneByLogin(login).orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+
+        AdministradorConjunto administradorConjunto = administradorConjuntoRepository
+            .findOneByUser(user)
+            .orElseThrow(() -> new RuntimeException("Administrador no encontrado"));
+
         ServicioConjunto servicioConjunto = servicioConjuntoMapper.toEntity(servicioConjuntoDTO);
+
+        // Asignar automáticamente el conjunto residencial del administrador
+        servicioConjunto.setConjuntoResidencial(administradorConjunto.getConjuntoResidencial());
+
         servicioConjunto = servicioConjuntoRepository.save(servicioConjunto);
         return servicioConjuntoMapper.toDto(servicioConjunto);
     }

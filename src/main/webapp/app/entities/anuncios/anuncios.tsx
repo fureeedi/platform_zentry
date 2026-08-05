@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react';
-import { Button, Table } from 'react-bootstrap';
-import { JhiItemCount, JhiPagination, TextFormat, byteSize, getPaginationState, openFile } from 'react-jhipster';
+import { Button } from 'react-bootstrap';
+import { JhiPagination, TextFormat, getPaginationState } from 'react-jhipster';
 import { Link, useLocation, useNavigate } from 'react-router';
 
-import { faSort, faSortDown, faSortUp } from '@fortawesome/free-solid-svg-icons';
+// import { faSort, faSortDown, faSortUp } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 import { APP_DATE_FORMAT } from 'app/config/constants';
@@ -11,9 +11,12 @@ import { useAppDispatch, useAppSelector } from 'app/config/store';
 import { Authority } from 'app/shared/jhipster/constants';
 import { hasAnyAuthority } from 'app/shared/auth/private-route';
 import { overridePaginationStateWithQueryParams } from 'app/shared/util/entity-utils';
-import { ASC, DESC, ITEMS_PER_PAGE, SORT } from 'app/shared/util/pagination.constants';
+import { ITEMS_PER_PAGE, SORT } from 'app/shared/util/pagination.constants';
+// import { IAnuncios } from "app/shared/model/anuncios.model";
 
 import { getEntities } from './anuncios.reducer';
+import { IAnuncios } from 'app/shared/model/anuncios.model';
+// import anuncios from "app/entities/anuncios/index";
 
 export const Anuncios = () => {
   const dispatch = useAppDispatch();
@@ -30,7 +33,8 @@ export const Anuncios = () => {
   const totalItems = useAppSelector(state => state.anuncios.totalItems);
   const account = useAppSelector(state => state.authentication.account);
 
-  const isAdministradorConjunto = hasAnyAuthority(account.authorities, [Authority.ADMIN, Authority.ADMINISTRADOR_CONJUNTO]);
+  const isAdministradorConjunto = hasAnyAuthority(account.authorities, [Authority.ADMINISTRADOR_CONJUNTO]);
+  // const isAdmin = hasAnyAuthority(account.authorities, [Authority.ADMIN]);
 
   const getAllEntities = () => {
     dispatch(
@@ -69,15 +73,15 @@ export const Anuncios = () => {
     }
   }, [pageLocation.search]);
 
-  const sort = p => () => {
+  /* const sort = p => () => {
     setPaginationState({
       ...paginationState,
       order: paginationState.order === ASC ? DESC : ASC,
       sort: p,
     });
-  };
+  }; */
 
-  const handlePagination = currentPage =>
+  const handlePagination = (currentPage: number) =>
     setPaginationState({
       ...paginationState,
       activePage: currentPage,
@@ -87,109 +91,123 @@ export const Anuncios = () => {
     sortEntities();
   };
 
-  const getSortIconByFieldName = (fieldName: string) => {
+  /* const getSortIconByFieldName = (fieldName: string) => {
     const sortFieldName = paginationState.sort;
     const order = paginationState.order;
     if (sortFieldName !== fieldName) {
       return faSort;
     }
     return order === ASC ? faSortUp : faSortDown;
-  };
+  }; */
 
   return (
-    <div>
-      <h2 id="anuncios-heading" data-cy="AnunciosHeading">
-        Anuncios
-        <div className="d-flex justify-content-end">
-          <Button className="me-2" variant="info" onClick={handleSyncList} disabled={loading}>
-            <FontAwesomeIcon icon="sync" spin={loading} /> Refrescar lista
-          </Button>
-          {isAdministradorConjunto && (
-            <Link to="/anuncios/new" className="btn btn-primary jh-create-entity" id="jh-create-entity" data-cy="entityCreateButton">
-              <FontAwesomeIcon icon="plus" />
-              &nbsp; Crear nuevo Anuncios
-            </Link>
-          )}
+    <div className="entity-page">
+      <div className="entity-page-header">
+        <div className="d-flex justify-content-between align-items-center mb-4">
+          <h2 id="anuncios-heading" data-cy="AnunciosHeading">
+            Anuncios
+          </h2>
+          <div className="flex-grow-1 d-flex justify-content-end">
+            <Button className="me-2" variant="info" onClick={handleSyncList} disabled={loading}>
+              <FontAwesomeIcon icon="sync" spin={loading} /> Refrescar lista
+            </Button>
+            {isAdministradorConjunto && (
+              <Link to="/anuncios/new" className="btn btn-primary jh-create-entity" id="jh-create-entity" data-cy="entityCreateButton">
+                <FontAwesomeIcon icon="plus" />
+                &nbsp; Crear nuevo Anuncio
+              </Link>
+            )}
+          </div>
         </div>
-      </h2>
-      <div className="table-responsive">
-        {anunciosList?.length > 0 ? (
-          <Table responsive>
-            <thead>
-              <tr>
-                <th className="hand" onClick={sort('id')}>
-                  ID <FontAwesomeIcon icon={getSortIconByFieldName('id')} />
-                </th>
-                <th className="hand" onClick={sort('titulo')}>
-                  Titulo <FontAwesomeIcon icon={getSortIconByFieldName('titulo')} />
-                </th>
-                <th className="hand" onClick={sort('descripcion')}>
-                  Descripcion <FontAwesomeIcon icon={getSortIconByFieldName('descripcion')} />
-                </th>
-                <th className="hand" onClick={sort('fecha')}>
-                  Fecha <FontAwesomeIcon icon={getSortIconByFieldName('fecha')} />
-                </th>
-                <th className="hand" onClick={sort('imagen')}>
-                  Imagen <FontAwesomeIcon icon={getSortIconByFieldName('imagen')} />
-                </th>
-                <th>
-                  Conjunto Residencial <FontAwesomeIcon icon="sort" />
-                </th>
-                <th>
-                  Administrador Conjunto <FontAwesomeIcon icon="sort" />
-                </th>
-                <th />
-              </tr>
-            </thead>
-            <tbody>
-              {anunciosList.map(anuncios => (
-                <tr key={`entity-${anuncios.id}`} data-cy="entityTable">
-                  <td>
-                    <Button as={Link as any} to={`/anuncios/${anuncios.id}`} variant="link" size="sm">
-                      {anuncios.id}
-                    </Button>
-                  </td>
-                  <td>{anuncios.titulo}</td>
-                  <td>{anuncios.descripcion}</td>
-                  <td>{anuncios.fecha ? <TextFormat type="date" value={anuncios.fecha} format={APP_DATE_FORMAT} /> : null}</td>
-                  <td>
-                    {anuncios.imagen ? (
-                      <div>
-                        {anuncios.imagenContentType ? (
-                          <a onClick={openFile(anuncios.imagenContentType, anuncios.imagen)}>
-                            <img src={`data:${anuncios.imagenContentType};base64,${anuncios.imagen}`} style={{ maxHeight: '30px' }} />
-                            &nbsp;
-                          </a>
-                        ) : null}
-                        <span>
-                          {anuncios.imagenContentType}, {byteSize(anuncios.imagen)}
-                        </span>
+      </div>
+      <div className="anuncios-grid">
+        {anunciosList?.length > 0
+          ? anunciosList.map((anuncios: IAnuncios) => (
+              <div className="anuncio-card" key={`entity-${anuncios.id}`} data-cy="entityCard">
+                {anuncios.imagen ? (
+                  <>
+                    <div className="anuncio-card-image-container">
+                      <img
+                        src={`data:${anuncios.imagenContentType};base64,${anuncios.imagen}`}
+                        alt={anuncios.titulo}
+                        className="anuncio-card-image"
+                      />
+                    </div>
+
+                    <div className={anuncios.imagen ? 'anuncio-card-info' : 'anuncio-card-info-full'}>
+                      <div className="anuncio-card-info">
+                        <div className="info-card-anuncio">
+                          <span className="info-title">Título</span>
+                          <span>{anuncios.titulo}</span>
+                        </div>
+
+                        <div className="info-card-anuncio">
+                          <span className="info-title">Descripción</span>
+                          <span>{anuncios.descripcion}</span>
+                        </div>
+
+                        <div className="info-card-anuncio">
+                          <span className="info-title">Fecha Publicación</span>
+                          <span>
+                            {anuncios.fecha ? <TextFormat value={anuncios.fecha as any} type="date" format={APP_DATE_FORMAT} /> : null}
+                          </span>
+                        </div>
+
+                        <div className="btn-group flex-btn-group-container mt-3">
+                          <Button as={Link as any} to={`/anuncios/${anuncios.id}`} variant="info" size="sm">
+                            <FontAwesomeIcon icon="eye" /> Vista
+                          </Button>
+
+                          {isAdministradorConjunto && (
+                            <>
+                              <Button
+                                as={Link as any}
+                                to={`/anuncios/${anuncios.id}/edit?page=${paginationState.activePage}&sort=${paginationState.sort},${paginationState.order}`}
+                                variant="primary"
+                                size="sm"
+                              >
+                                <FontAwesomeIcon icon="pencil-alt" /> Editar
+                              </Button>
+
+                              <Button
+                                onClick={() =>
+                                  (window.location.href = `/anuncios/${anuncios.id}/delete?page=${paginationState.activePage}&sort=${paginationState.sort},${paginationState.order}`)
+                                }
+                                variant="danger"
+                                size="sm"
+                              >
+                                <FontAwesomeIcon icon="trash" /> Eliminar
+                              </Button>
+                            </>
+                          )}
+                        </div>
                       </div>
-                    ) : null}
-                  </td>
-                  <td>
-                    {anuncios.conjuntoResidencial ? (
-                      <Link to={`/conjunto-residencial/${anuncios.conjuntoResidencial.id}`}>
-                        {anuncios.conjuntoResidencial.nombreConjunto}
-                      </Link>
-                    ) : (
-                      ''
-                    )}
-                  </td>
-                  <td>
-                    {anuncios.administradorConjunto ? (
-                      <Link to={`/administrador-conjunto/${anuncios.administradorConjunto.id}`}>
-                        {anuncios.administradorConjunto.numeroDocumento}
-                      </Link>
-                    ) : (
-                      ''
-                    )}
-                  </td>
-                  <td className="text-end">
-                    <div className="btn-group flex-btn-group-container">
-                      <Button as={Link as any} to={`/anuncios/${anuncios.id}`} variant="info" size="sm" data-cy="entityDetailsButton">
-                        <FontAwesomeIcon icon="eye" /> <span className="d-none d-md-inline">Vista</span>
+                    </div>
+                  </>
+                ) : (
+                  <div className="anuncio-card-info-full">
+                    <div className="info-card-anuncio">
+                      <span className="info-title">Título</span>
+                      <span>{anuncios.titulo}</span>
+                    </div>
+
+                    <div className="info-card-anuncio">
+                      <span className="info-title">Descripción</span>
+                      <span>{anuncios.descripcion}</span>
+                    </div>
+
+                    <div className="info-card-anuncio">
+                      <span className="info-title">Fecha Publicación</span>
+                      <span>
+                        {anuncios.fecha ? <TextFormat value={anuncios.fecha as any} type="date" format={APP_DATE_FORMAT} /> : null}
+                      </span>
+                    </div>
+
+                    <div className="btn-group flex-btn-group-container mt-3">
+                      <Button as={Link as any} to={`/anuncios/${anuncios.id}`} variant="info" size="sm">
+                        <FontAwesomeIcon icon="eye" /> Vista
                       </Button>
+
                       {isAdministradorConjunto && (
                         <>
                           <Button
@@ -197,9 +215,8 @@ export const Anuncios = () => {
                             to={`/anuncios/${anuncios.id}/edit?page=${paginationState.activePage}&sort=${paginationState.sort},${paginationState.order}`}
                             variant="primary"
                             size="sm"
-                            data-cy="entityEditButton"
                           >
-                            <FontAwesomeIcon icon="pencil-alt" /> <span className="d-none d-md-inline">Editar</span>
+                            <FontAwesomeIcon icon="pencil-alt" /> Editar
                           </Button>
 
                           <Button
@@ -208,27 +225,20 @@ export const Anuncios = () => {
                             }
                             variant="danger"
                             size="sm"
-                            data-cy="entityDeleteButton"
                           >
-                            <FontAwesomeIcon icon="trash" /> <span className="d-none d-md-inline">Eliminar</span>
+                            <FontAwesomeIcon icon="trash" /> Eliminar
                           </Button>
                         </>
                       )}
                     </div>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </Table>
-        ) : (
-          !loading && <div className="alert alert-warning">Ningún Anuncios encontrado</div>
-        )}
+                  </div>
+                )}
+              </div>
+            ))
+          : !loading && <div className="alert alert-warning">Ningún Anuncios encontrado</div>}
       </div>
       {totalItems ? (
-        <div className={anunciosList && anunciosList.length > 0 ? '' : 'd-none'}>
-          <div className="justify-content-center d-flex">
-            <JhiItemCount page={paginationState.activePage} total={totalItems} itemsPerPage={paginationState.itemsPerPage} />
-          </div>
+        <div className="pagination-container">
           <div className="justify-content-center d-flex">
             <JhiPagination
               activePage={paginationState.activePage}

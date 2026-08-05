@@ -169,6 +169,16 @@ public class ServicioResource {
         return ResponseEntity.ok().headers(headers).body(page.getContent());
     }
 
+    @GetMapping("/mis-servicios")
+    @PreAuthorize("hasAuthority(\"" + AuthoritiesConstants.ADMINISTRADOR_CONJUNTO + "\")")
+    public ResponseEntity<List<ServicioDTO>> getMisServicios() {
+        LOG.debug("REST request para obtener los servicios del administrador autenticado");
+
+        List<ServicioDTO> servicios = servicioService.findMisServicios();
+
+        return ResponseEntity.ok(servicios);
+    }
+
     /**
      * {@code GET  /servicios/:id} : get the "id" servicio.
      *

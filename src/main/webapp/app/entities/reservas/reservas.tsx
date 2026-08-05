@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Button, Table } from 'react-bootstrap';
-import { JhiItemCount, JhiPagination, TextFormat, getPaginationState } from 'react-jhipster';
+import { JhiPagination, TextFormat, getPaginationState } from 'react-jhipster';
 import { Link, useLocation, useNavigate } from 'react-router';
 
 import { faSort, faSortDown, faSortUp } from '@fortawesome/free-solid-svg-icons';
@@ -13,7 +13,8 @@ import { hasAnyAuthority } from 'app/shared/auth/private-route';
 import { overridePaginationStateWithQueryParams } from 'app/shared/util/entity-utils';
 import { ASC, DESC, ITEMS_PER_PAGE, SORT } from 'app/shared/util/pagination.constants';
 
-import { getEntities } from './reservas.reducer';
+import { getEntities, cambiarEstado } from './reservas.reducer';
+import { getEntities as getServicios } from 'app/entities/servicio-conjunto/servicio-conjunto.reducer';
 
 export const Reservas = () => {
   const dispatch = useAppDispatch();
@@ -25,7 +26,11 @@ export const Reservas = () => {
     overridePaginationStateWithQueryParams(getPaginationState(pageLocation, ITEMS_PER_PAGE, 'id'), pageLocation.search),
   );
 
+  const [estadoFiltro, setEstadoFiltro] = useState('');
+  const [servicioFiltro, setServicioFiltro] = useState('');
+
   const reservasList = useAppSelector(state => state.reservas.entities);
+  const servicios = useAppSelector(state => state.servicioConjunto.entities);
   const loading = useAppSelector(state => state.reservas.loading);
   const totalItems = useAppSelector(state => state.reservas.totalItems);
   const account = useAppSelector(state => state.authentication.account);
@@ -34,7 +39,7 @@ export const Reservas = () => {
   const isAdministradorConjunto = hasAnyAuthority(account.authorities, [Authority.ADMINISTRADOR_CONJUNTO]);
   const isCliente = hasAnyAuthority(account.authorities, [Authority.CLIENTE]);
 
-  const getAllEntities = () => {
+  /* const getAllEntities = () => {
     dispatch(
       getEntities({
         page: paginationState.activePage - 1,
@@ -42,11 +47,24 @@ export const Reservas = () => {
         sort: `${paginationState.sort},${paginationState.order}`,
       }),
     );
-  };
+  }; */
 
   const sortEntities = () => {
-    getAllEntities();
-    const endURL = `?page=${paginationState.activePage}&sort=${paginationState.sort},${paginationState.order}`;
+    dispatch(
+      getEntities({
+        page: paginationState.activePage - 1,
+        size: paginationState.itemsPerPage,
+        sort: `${paginationState.sort},${paginationState.order}`,
+        estado: estadoFiltro,
+        servicioId: servicioFiltro,
+      }),
+    );
+    const endURL =
+      `?page=${paginationState.activePage}` +
+      `&sort=${paginationState.sort},${paginationState.order}` +
+      `&estado=${estadoFiltro}` +
+      `&servicioId=${servicioFiltro}`;
+
     if (pageLocation.search !== endURL) {
       navigate(`${pageLocation.pathname}${endURL}`);
     }
@@ -54,7 +72,17 @@ export const Reservas = () => {
 
   useEffect(() => {
     sortEntities();
-  }, [paginationState.activePage, paginationState.order, paginationState.sort]);
+  }, [paginationState.activePage, paginationState.order, paginationState.sort, estadoFiltro, servicioFiltro]);
+
+  useEffect(() => {
+    dispatch(
+      getServicios({
+        page: 0,
+        size: 100,
+        sort: 'id,asc',
+      }),
+    );
+  }, []);
 
   useEffect(() => {
     const params = new URLSearchParams(pageLocation.search);
@@ -99,9 +127,11 @@ export const Reservas = () => {
   };
 
   return (
-    <div>
-      <h2 id="reservas-heading" data-cy="ReservasHeading">
-        Reservas
+    <div className="entity-page">
+      <div className="d-flex justify-content-between align-items-center mb-4">
+        <h2 id="reservas-heading" data-cy="ReservasHeading">
+          Reservas
+        </h2>
         <div className="d-flex justify-content-end">
           {isAdministradorConjunto && (
             <Button className="me-2" variant="info" onClick={handleSyncList} disabled={loading}>
@@ -115,8 +145,42 @@ export const Reservas = () => {
             </Link>
           )}
         </div>
-      </h2>
-      <div className="table-responsive">
+      </div>
+      {isAdministradorConjunto && (
+        <>
+          <div className="card filter-card mb-3">
+            <div className="card-body">
+              <div className="row align-items-end">
+                <div className="col-md-4">
+                  <label className="form-label">Estado</label>
+
+                  <select className="form-select" value={estadoFiltro} onChange={e => setEstadoFiltro(e.target.value)}>
+                    <option value="">Todas</option>
+                    <option value="PENDIENTE">Pendientes</option>
+                    <option value="APROBADO">Aprobadas</option>
+                    <option value="RECHAZADO">Rechazadas</option>
+                  </select>
+                </div>
+
+                <div className="col-md-4">
+                  <label className="form-label">Servicio</label>
+
+                  <select className="form-select" value={servicioFiltro} onChange={e => setServicioFiltro(e.target.value)}>
+                    <option value="">Todos</option>
+
+                    {servicios.map(servicio => (
+                      <option key={servicio.id} value={servicio.id}>
+                        {servicio.servicio?.nombreZonaComun}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              </div>
+            </div>
+          </div>
+        </>
+      )}
+      <div className="table-responsive entity-table">
         {reservasList?.length > 0 ? (
           <Table responsive>
             <thead>
@@ -126,32 +190,14 @@ export const Reservas = () => {
                     ID <FontAwesomeIcon icon={getSortIconByFieldName('id')} />
                   </th>
                 )}
-                <th className="hand" onClick={sort('fechaSolicitud')}>
-                  Fecha Solicitud <FontAwesomeIcon icon={getSortIconByFieldName('fechaSolicitud')} />
-                </th>
-                <th className="hand" onClick={sort('fechaReserva')}>
-                  Fecha Reserva <FontAwesomeIcon icon={getSortIconByFieldName('fechaReserva')} />
-                </th>
-                <th className="hand" onClick={sort('horaInicio')}>
-                  Hora Inicio <FontAwesomeIcon icon={getSortIconByFieldName('horaInicio')} />
-                </th>
-                <th className="hand" onClick={sort('horafin')}>
-                  Horafin <FontAwesomeIcon icon={getSortIconByFieldName('horafin')} />
-                </th>
-                <th className="hand" onClick={sort('cuposApartados')}>
-                  Cupos Apartados <FontAwesomeIcon icon={getSortIconByFieldName('cuposApartados')} />
-                </th>
-                <th className="hand" onClick={sort('estado')}>
-                  Estado <FontAwesomeIcon icon={getSortIconByFieldName('estado')} />
-                </th>
-                <th>
-                  Servicio Conjunto <FontAwesomeIcon icon="sort" />
-                </th>
-                {isAdministradorConjunto && (
-                  <th>
-                    Vinculado <FontAwesomeIcon icon="sort" />
-                  </th>
-                )}
+                <th>Fecha Solicitud</th>
+                <th>Fecha Reserva</th>
+                <th>Hora Inicio</th>
+                <th>Hora Finalización</th>
+                <th>Cupos Apartados</th>
+                <th>Estado</th>
+                <th>Servicio</th>
+                {isAdministradorConjunto && <th>Vinculado</th>}
                 <th />
               </tr>
             </thead>
@@ -176,7 +222,11 @@ export const Reservas = () => {
                   <td>{reservas.horaInicio}</td>
                   <td>{reservas.horafin}</td>
                   <td>{reservas.cuposApartados}</td>
-                  <td>{reservas.estado}</td>
+                  <td>
+                    {reservas.estado === 'PENDIENTE' && <span className="badge bg-warning fs-6 px-3 py-2">PENDIENTE</span>}
+                    {reservas.estado === 'APROBADO' && <span className="badge bg-success fs-6 px-3 py-2">APROBADO</span>}
+                    {reservas.estado === 'RECHAZADO' && <span className="badge bg-danger fs-6 px-3 py-2">RECHAZADO</span>}
+                  </td>
                   <td>
                     {reservas.servicioConjunto ? (
                       <Link to={`/servicio-conjunto/${reservas.servicioConjunto.id}`}>
@@ -199,26 +249,73 @@ export const Reservas = () => {
                   )}
                   <td className="text-end">
                     <div className="btn-group flex-btn-group-container">
-                      <Button as={Link as any} to={`/reservas/${reservas.id}`} variant="info" size="sm" data-cy="entityDetailsButton">
+                      <Button
+                        as={Link as any}
+                        to={`/reservas/${reservas.id}`}
+                        variant="info"
+                        size="sm"
+                        className="me-1"
+                        data-cy="entityDetailsButton"
+                      >
                         <FontAwesomeIcon icon="eye" /> <span className="d-none d-md-inline">Vista</span>
                       </Button>
-                      {isAdministradorConjunto && (
+                      {isAdministradorConjunto && reservas.estado === 'PENDIENTE' && (
+                        <>
+                          <Button
+                            variant="success"
+                            size="sm"
+                            className="me-1"
+                            onClick={() =>
+                              dispatch(
+                                cambiarEstado({
+                                  id: reservas.id!,
+                                  estado: 'APROBADO',
+                                }),
+                              )
+                            }
+                          >
+                            <FontAwesomeIcon icon="check" /> Aprobar
+                          </Button>
+                          <Button
+                            variant="danger"
+                            size="sm"
+                            className="me-1"
+                            onClick={() =>
+                              dispatch(
+                                cambiarEstado({
+                                  id: reservas.id!,
+                                  estado: 'RECHAZADO',
+                                }),
+                              )
+                            }
+                          >
+                            <FontAwesomeIcon icon="times-circle" /> Rechazar
+                          </Button>
+                        </>
+                      )}
+                      {isAdmin && (
                         <>
                           <Button
                             as={Link as any}
                             to={`/reservas/${reservas.id}/edit?page=${paginationState.activePage}&sort=${paginationState.sort},${paginationState.order}`}
                             variant="primary"
                             size="sm"
+                            className="me-1"
                             data-cy="entityEditButton"
                           >
                             <FontAwesomeIcon icon="pencil-alt" /> <span className="d-none d-md-inline">Editar</span>
                           </Button>
+                        </>
+                      )}
+                      {isAdministradorConjunto && (
+                        <>
                           <Button
                             onClick={() =>
                               (window.location.href = `/reservas/${reservas.id}/delete?page=${paginationState.activePage}&sort=${paginationState.sort},${paginationState.order}`)
                             }
-                            variant="danger"
+                            variant="warning"
                             size="sm"
+                            className="me-1"
                             data-cy="entityDeleteButton"
                           >
                             <FontAwesomeIcon icon="trash" /> <span className="d-none d-md-inline">Eliminar</span>
@@ -236,10 +333,7 @@ export const Reservas = () => {
         )}
       </div>
       {totalItems ? (
-        <div className={reservasList && reservasList.length > 0 ? '' : 'd-none'}>
-          <div className="justify-content-center d-flex">
-            <JhiItemCount page={paginationState.activePage} total={totalItems} itemsPerPage={paginationState.itemsPerPage} />
-          </div>
+        <div className="pagination-container">
           <div className="justify-content-center d-flex">
             <JhiPagination
               activePage={paginationState.activePage}

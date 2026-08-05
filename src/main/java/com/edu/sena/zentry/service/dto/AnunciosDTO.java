@@ -21,17 +21,17 @@ public class AnunciosDTO implements Serializable {
     @Size(max = 200)
     private String descripcion;
 
-    @NotNull
+    // se quita @NotNull
     private ZonedDateTime fecha;
 
     private byte[] imagen;
 
     private String imagenContentType;
 
-    @NotNull
+    // Se quita @NotNull
     private ConjuntoResidencialDTO conjuntoResidencial;
 
-    @NotNull
+    // Se quita @NotNull
     private AdministradorConjuntoDTO administradorConjunto;
 
     public String getId() {

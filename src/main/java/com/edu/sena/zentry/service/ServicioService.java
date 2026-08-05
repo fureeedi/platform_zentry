@@ -1,6 +1,7 @@
 package com.edu.sena.zentry.service;
 
 import com.edu.sena.zentry.service.dto.ServicioDTO;
+import java.util.List;
 import java.util.Optional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -55,4 +56,6 @@ public interface ServicioService {
      * @param id the id of the entity.
      */
     void delete(String id);
+
+    List<ServicioDTO> findMisServicios();
 }

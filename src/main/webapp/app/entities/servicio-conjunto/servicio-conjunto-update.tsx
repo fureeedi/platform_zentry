@@ -6,8 +6,10 @@ import { Link, useNavigate, useParams } from 'react-router';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 import { useAppDispatch, useAppSelector } from 'app/config/store';
+import { hasAnyAuthority } from 'app/shared/auth/private-route';
+import { Authority } from 'app/shared/jhipster/constants';
 import { getEntities as getConjuntoResidencials } from 'app/entities/conjunto-residencial/conjunto-residencial.reducer';
-import { getEntities as getServicios } from 'app/entities/servicio/servicio.reducer';
+import { getEntities as getServicios, getMisServicios } from 'app/entities/servicio/servicio.reducer';
 import { TipoDisponibilidad } from 'app/shared/model/enumerations/tipo-disponibilidad.model';
 
 import { createEntity, getEntity, reset, updateEntity } from './servicio-conjunto.reducer';
@@ -27,6 +29,10 @@ export const ServicioConjuntoUpdate = () => {
   const updating = useAppSelector(state => state.servicioConjunto.updating);
   const updateSuccess = useAppSelector(state => state.servicioConjunto.updateSuccess);
   const tipoDisponibilidadValues = Object.keys(TipoDisponibilidad);
+  const isAdmin = useAppSelector(state => hasAnyAuthority(state.authentication.account.authorities, [Authority.ADMIN]));
+  const isAdministradorConjunto = useAppSelector(state =>
+    hasAnyAuthority(state.authentication.account.authorities, [Authority.ADMINISTRADOR_CONJUNTO]),
+  );
 
   const handleClose = () => {
     navigate(`/servicio-conjunto${location.search}`);
@@ -39,8 +45,12 @@ export const ServicioConjuntoUpdate = () => {
       dispatch(getEntity(id));
     }
 
-    dispatch(getConjuntoResidencials({}));
-    dispatch(getServicios({}));
+    if (isAdmin) {
+      dispatch(getConjuntoResidencials({}));
+      dispatch(getServicios({}));
+    } else if (isAdministradorConjunto) {
+      dispatch(getMisServicios());
+    }
   }, []);
 
   useEffect(() => {
@@ -54,12 +64,15 @@ export const ServicioConjuntoUpdate = () => {
       values.aforoMaximo = Number(values.aforoMaximo);
     }
 
-    const entity = {
+    const entity: any = {
       ...servicioConjuntoEntity,
       ...values,
-      conjuntoResidencial: conjuntoResidencials.find(it => it.id.toString() === values.conjuntoResidencial?.toString()),
       servicio: servicios.find(it => it.id.toString() === values.servicio?.toString()),
     };
+
+    if (isAdmin) {
+      entity.conjuntoResidencial = conjuntoResidencials.find(it => it.id.toString() === values.conjuntoResidencial?.toString());
+    }
 
     if (isNew) {
       dispatch(createEntity(entity));
@@ -113,23 +126,25 @@ export const ServicioConjuntoUpdate = () => {
                   validate: v => isNumber(v) || 'Este campo debe ser un número.',
                 }}
               />
-              <ValidatedField
-                id="servicio-conjunto-conjuntoResidencial"
-                name="conjuntoResidencial"
-                data-cy="conjuntoResidencial"
-                label="Conjunto Residencial"
-                type="select"
-                required
-              >
-                <option value="" key="0" />
-                {conjuntoResidencials
-                  ? conjuntoResidencials.map(otherEntity => (
-                      <option value={otherEntity.id} key={otherEntity.id}>
-                        {otherEntity.nombreConjunto}
-                      </option>
-                    ))
-                  : null}
-              </ValidatedField>
+              {isAdmin && (
+                <ValidatedField
+                  id="servicio-conjunto-conjuntoResidencial"
+                  name="conjuntoResidencial"
+                  data-cy="conjuntoResidencial"
+                  label="Conjunto Residencial"
+                  type="select"
+                  required
+                >
+                  <option value="" key="0" />
+                  {conjuntoResidencials
+                    ? conjuntoResidencials.map(otherEntity => (
+                        <option value={otherEntity.id} key={otherEntity.id}>
+                          {otherEntity.nombreConjunto}
+                        </option>
+                      ))
+                    : null}
+                </ValidatedField>
+              )}
               <FormText>Este campo es obligatorio.</FormText>
               <ValidatedField id="servicio-conjunto-servicio" name="servicio" data-cy="servicio" label="Servicio" type="select" required>
                 <option value="" key="0" />

@@ -8,3 +8,20 @@ Main page styles
   background: url('/content/images/jhipster_family_member_0.svg') no-repeat center top;
   background-size: contain;
 }
+
+.landing-page {
+  min-height: calc(100vh - 80px);
+  background: linear-gradient(180deg, #123b4a 0%, #1f5566 100%);
+  border-radius: 16px;
+  padding: 4rem 2rem;
+  text-align: center;
+}
+
+.landing-page h1 {
+  color: #ffffff;
+  font-weight: 700;
+}
+
+.landing-page p {
+  color: rgba(255, 255, 255, 0.85);
+}

@@ -20,7 +20,7 @@ public class ServicioConjuntoDTO implements Serializable {
     @Min(value = 1)
     private Integer aforoMaximo;
 
-    @NotNull
+    // Se quita @NotNull
     private ConjuntoResidencialDTO conjuntoResidencial;
 
     @NotNull

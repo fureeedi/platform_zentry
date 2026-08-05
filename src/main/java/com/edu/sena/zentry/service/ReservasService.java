@@ -1,5 +1,6 @@
 package com.edu.sena.zentry.service;
 
+import com.edu.sena.zentry.domain.enumeration.Estado;
 import com.edu.sena.zentry.service.dto.ReservasDTO;
 import java.util.Optional;
 import org.springframework.data.domain.Page;
@@ -63,4 +64,8 @@ public interface ReservasService {
      * @param id the id of the entity.
      */
     void delete(String id);
+
+    ReservasDTO cambiarEstado(String id, Estado estado);
+
+    Page<ReservasDTO> buscarPorFiltros(Estado estado, String servicioId, Pageable pageable);
 }
