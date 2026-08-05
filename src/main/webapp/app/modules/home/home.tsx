@@ -11,6 +11,14 @@ export const Home = () => {
   return (
     <Row className="justify-content-center align-items-center" style={{ minHeight: '60vh' }}>
       <Col md="10" lg="8" className="text-center px-4">
+        <div className="mb-4 d-flex justify-content-center">
+          <img
+            src="content/images/logo-jhipster.png"
+            alt="Zentry Logo"
+            className="img-fluid"
+            style={{ maxHeight: '140px', objectFit: 'contain' }}
+          />
+        </div>
         <h1 className="display-4 text-white fw-bold mb-3">¡Bienvenido a Zentry!</h1>
 
         <p className="fs-5 text-light opacity-75 mb-5 lh-base">
